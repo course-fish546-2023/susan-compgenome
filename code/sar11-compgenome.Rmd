@@ -6,5 +6,31 @@ date: "2023-04-05"
 #INSTALLING PACKAGES
 ```{r}
 install.packages("micropan")
+install.packages("R.utils")
+```
+
+#INSTALLING LIBRARIES
+```{r}
+library(tidyverse)
+library(R.utils)
+```
+
+#THE GENOME TABLE
+```{r}
+gnm.tbl <- suppressMessages(read_delim("/home/jovyan/github/susan-compgenome/code/Candidatus_Pelagibacter.csv", delim = ",")) %>% 
+  select(Name = `#Organism Name`, Strain, Level, GenBank_FTP = `GenBank FTP`) %>% 
+  mutate(genome_id = str_c("GID", 1:n())) %>% 
+  mutate(GenBank_ID = str_remove(GenBank_FTP, "^.+/")) %>% 
+  slice(1:10)
+```
+
+#DOWNLOADING
+```{r}
+for(i in 1:nrow(gnm.tbl)){
+  filename <- str_c(gnm.tbl$GenBank_ID[i], "_genomic.fna.gz")
+  download.file(url = file.path(gnm.tbl$GenBank_FTP[i], "Candidatus_Pelagibacter.csv"),
+                destfile = file.path("code", "Candidatus_Pelagibacter.csv"))
+  gunzip(file.path("code", filename), overwrite = T)
+}
 ```
 
