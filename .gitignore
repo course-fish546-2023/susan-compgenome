@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+assignments/blastdb
+assignments/data/*.f*
+assignments/data/*.tab
+
+
