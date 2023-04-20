@@ -3,11 +3,13 @@ title: "sar11blastp.Rmd"
 output: html_document
 date: "2023-04-20"
 ---
+
 ```{r setup, include+FALSE}
 library(knitr)
 library(tidyverse)
 library(kableExtra)
 library(DT)
+library(reshape2)
 library(Biostrings)
 library(tm)
 
@@ -51,21 +53,43 @@ grep -c ">" ../data_raw/012276695protein.faa
 ```{r}
 # Read FASTA file
 fasta_file <- "../data_raw/012276695protein.faa"  
-sequences <- readDNAStringSet(fasta_file)
+psequences <- readDNAStringSet(fasta_file)
 
 # Calculate sequence lengths
-sequence_lengths <- width(sequences)
+psequence_lengths <- width(psequences)
 
 # Create a data frame
-sequence_lengths_df <- data.frame(Length = sequence_lengths)
+psequence_lengths_df <- data.frame(Length = psequence_lengths)
 
 # Plot histogram using ggplot2
-ggplot(sequence_lengths_df, aes(x = Length)) +
-  geom_histogram(binwidth = 1, color = "grey", fill = "blue", alpha = 0.75) +
-  labs(title = "Histogram of Sequence Lengths",
-       x = "Sequence Length",
+ggplot(psequence_lengths_df, aes(x = Length)) +
+  geom_histogram(binwidth = 1, color = "purple", fill = "red", alpha = 0.75) +
+  labs(title = "Histogram of P-Sequence Lengths",
+       x = "P-Sequence Length",
        y = "Frequency") +
   theme_minimal()
+```
+```{r}
+# Read FASTA file
+fasta_file <- "../data_raw/012276695protein.faa"
+sequences <- readDNAStringSet(fasta_file)
+
+# Calculate base composition
+base_composition <- alphabetFrequency(sequences, baseOnly = TRUE)
+
+# Convert to data frame and reshape for ggplot2
+base_composition_df <- as.data.frame(base_composition)
+base_composition_df$ID <- rownames(base_composition_df)
+base_composition_melted <- reshape2::melt(base_composition_df, id.vars = "ID", variable.name = "Base", value.name = "Count")
+
+# Plot base composition bar chart using ggplot2
+ggplot(base_composition_melted, aes(x = Base, y = Count, fill = Base)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Base Composition",
+       x = "Base",
+       y = "Count") +
+  theme_minimal() +
+  scale_fill_manual(values = c("A" = "purple", "C" = "orange", "G" = "pink", "T" = "yellow"))
 ```
 
 
