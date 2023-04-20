@@ -42,6 +42,7 @@ tar -xf ncbi-blast-2.13.0+-x64-linux.tar.gz
 -out ../blastdb/uniprot_sprot_r2023_04
 
 ```
+
 #Get the query sequence
 
 ```{bash}
@@ -49,6 +50,8 @@ head ../data_raw/012276695protein.faa
 echo "How many sequences are there?"
 grep -c ">" ../data_raw/012276695protein.faa
 ```
+
+#Histogram for the Protein Sequences
 ```{r}
 # Read FASTA file
 fasta_file <- "../data_raw/012276695protein.faa"  
@@ -68,6 +71,8 @@ ggplot(psequence_lengths_df, aes(x = Length)) +
        y = "Frequency") +
   theme_minimal()
 ```
+
+#Boxplots for Query Sequences
 ```{r}
 # Read FASTA file
 fasta_file <- "../data_raw/012276695protein.faa"
