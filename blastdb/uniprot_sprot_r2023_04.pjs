@@ -1,0 +1,22 @@
+{
+  "version": "1.2",
+  "dbname": "uniprot_sprot_r2023_04",
+  "dbtype": "Protein",
+  "db-version": 5,
+  "description": "../data_raw/012276695protein.faa",
+  "number-of-letters": 428058,
+  "number-of-sequences": 1414,
+  "last-updated": "2023-04-20T10:25:00",
+  "number-of-volumes": 1,
+  "bytes-total": 706469,
+  "bytes-to-cache": 440913,
+  "files": [
+    "uniprot_sprot_r2023_04.pdb",
+    "uniprot_sprot_r2023_04.phr",
+    "uniprot_sprot_r2023_04.pin",
+    "uniprot_sprot_r2023_04.pot",
+    "uniprot_sprot_r2023_04.psq",
+    "uniprot_sprot_r2023_04.ptf",
+    "uniprot_sprot_r2023_04.pto"
+  ]
+}
