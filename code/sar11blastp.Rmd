@@ -16,8 +16,7 @@ library(tm)
 
 # Dowload Software
 
-https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.13.0+-x64-linux.tar.gz
-
+##This is the code to dowload the software. My computer had this software installed already. 
 
 ```{bash}
 cd /home/joyvan/applications
@@ -35,34 +34,46 @@ tar -xf ncbi-blast-2.13.0+-x64-linux.tar.gz
 
 # Make a database
 
+Comparing protein sequence 012276695protein.faa (for easier terms called 95) to 000012345.1protein.faa (for easier terms called 45). First creating a database for 95.  
+
 ```{bash}
 /home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
 -in ../data_raw/012276695protein.faa \
 -dbtype prot \
--out ../blastdb/012276695-protein
-
+-out ../blastdb/95-protein
 ```
 
-
+Comparing 95 to 45. 
 ```{bash}
 /home/shared/ncbi-blast-2.11.0+/bin/blastp \
 -query ../data_raw/000012345.1protein.faa \
--db ../blastdb/012276695-protein \
--out ../output/45-95_blastp.tab \
+-db ../blastdb/95-protein \
+-out ../output/95-45_blastp.tab \
 -evalue 1E-20 \
 -num_threads 20 \
 -max_target_seqs 1 \
 -outfmt 6
 ```
 
+Secondly creating a database for 45.
 ```{bash}
 /home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
--in ../data_raw/012276695protein.faa \
+-in ../data_raw/000012345.1protein.faa \
 -dbtype prot \
--out ../blastdb/012276695-protein
-
+-out ../blastdb/45-protein
 ```
 
+Comparing 45 to 95.
+```{bash}
+/home/shared/ncbi-blast-2.11.0+/bin/blastp \
+-query ../data_raw/012276695protein.faa \
+-db ../blastdb/95-protein \
+-out ../output/45-95_blastp.tab \
+-evalue 1E-20 \
+-num_threads 20 \
+-max_target_seqs 1 \
+-outfmt 6
+```
 
 
 #Get the query sequence
@@ -124,7 +135,7 @@ ggplot(base_composition_melted, aes(x = Base, y = Count, fill = Base)) +
 ```{bash}
 ~/applications/ncbi-blast-2.13.0+/bin/blastp \
 -query ../data_raw/012276695protein.faa \
--db ../blastdb/uniprot_sprot_r2023_04 \
+-db ../blastdb/95-protein \
 -out ../output/012276695-uniprot_blastp.tab \
 -evalue 1E-20 \
 -num_threads 20 \
@@ -147,8 +158,8 @@ grep -c ">" ../data_raw/012276695protein.faa
 ```{bash}
 ~/applications/ncbi-blast-2.13.0+/bin/blastp \
 -query ../data_raw/012276695protein.faa \
--db ../blastdb/uniprot_sprot_r2023_04 \
--out ../output/012276695-uniprot_blastp.tab \
+-db ../blastdb/95-protein \
+-out ../output/95_blastp.tab \
 -evalue 1E-20 \
 -num_threads 20 \
 -max_target_seqs 1 \
@@ -156,8 +167,8 @@ grep -c ">" ../data_raw/012276695protein.faa
 ```
 
 ```{bash}
-head -2 ../output/012276695-uniprot_blastp.tab
-wc -l ../output/012276695-uniprot_blastp.tab
+head -2 ../output/95_blastp.tab
+wc -l ../output/95_blastp.tab
 ```
 
 
@@ -165,19 +176,19 @@ wc -l ../output/012276695-uniprot_blastp.tab
 
 
 ```{bash}
-head -2 ../output/012276695-uniprot_blastp.tab
-wc -l ../output/012276695-uniprot_blastp.tab
+head -2 ../output/95_blastp.tab
+wc -l ../output/95_blastp.tab
 ```
 
 
 ```{bash}
-tr '|' '\t' < ../output/012276695-uniprot_blastp.tab | head -2
+tr '|' '\t' < ../output/95_blastp.tab | head -2
 ```
 
 
 ```{bash}
-tr '|' '\t' < ../output/012276695-uniprot_blastp.tab \
-> ../output/012276695-uniprot_blastp.tab
+tr '|' '\t' < ../output/95_blastp.tab \
+> ../output/95_blastp.tab
 ```
 
 
@@ -186,15 +197,9 @@ head -2 ../data_raw/012276695protein.faa
 wc -l ../data_raw/012276695protein.faa
 ```
 
-```{r}
-install.packages("kableExtra")
-
-library(tidyverse)
-library("kableExtra")
-```
 
 ```{r}
-bltabl <- read.csv("../output/12276695-uniprot_blastp.tab", sep = '\t', header = FALSE)
+bltabl <- read.csv("../output/95_blastp.tab", sep = '\t', header = FALSE)
 ```
 
 ```{r}
@@ -215,6 +220,14 @@ head(
 ) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
+
+```{r}
+left_join(bltabl, spgo,  by = c("V3" = "Entry")) %>%
+  select(V1, V3, V13, Protein.names, Organism, Gene.Ontology..biological.process., Gene.Ontology.IDs) %>% mutate(V1 = str_replace_all(V1, 
+            pattern = "solid0078_20110412_FRAG_BC_WHITE_WHITE_F3_QV_SE_trimmed", replacement = "Ab")) %>%
+write_delim("../output/95_blast_annot_go.tab", delim = '\t')
+```
+
 
 ```{r}
 annot_tab <- read.csv("../output/blast_annot_go.tab", sep = '\t', header = TRUE)
