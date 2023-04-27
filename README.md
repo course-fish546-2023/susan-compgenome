@@ -33,3 +33,8 @@ Workflow:
   b. provides information about the genomes.
 3. Identifies differences and similarities.
   a. I think this is the ultimate goal where you can find the differences and similarities on a table. Maybe using the proteins could indicate more metabolite utilization.
+
+
+
+helpful links:
+https://robertslab.github.io/resources/code_Snippets/#fasta-to-tab-delimited
