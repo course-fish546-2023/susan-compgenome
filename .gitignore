@@ -6,5 +6,6 @@ assignments/blastdb
 assignments/data/*.f*
 assignments/data/*.tab
 susan-compgenome/data_raw
+assignments/output/*.tab
 
 
