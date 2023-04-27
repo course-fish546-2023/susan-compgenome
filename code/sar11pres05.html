@@ -329,26 +329,41 @@
 </div>
 
 </section>
-<section id="quarto" class="slide level2">
-<h2>Quarto</h2>
-<p>Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <a href="https://quarto.org/docs/presentations/" class="uri">https://quarto.org/docs/presentations/</a>.</p>
+<section id="sar11-bacteria-comparative-genomics-project" class="slide level2">
+<h2><strong>SAR11 Bacteria Comparative Genomics Project</strong></h2>
+<p>SAR11 is a group of small, carbon-oxidizing bacteria that reach a global estimated population size of 2.4×10<sup>28</sup> cells-approximately 25% of all plankton. They play a key role in the ocean’s environment.</p>
+<p>The goal of this comparative genomics project is to find presense and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.</p>
 </section>
-<section id="bullets" class="slide level2">
-<h2>Bullets</h2>
-<p>When you click the <strong>Render</strong> button a document will be generated that includes:</p>
+<section id="methods" class="slide level2">
+<h2>Methods</h2>
 <ul>
-<li>Content authored with markdown</li>
-<li>Output from executable code</li>
+<li>Determine goal of the project</li>
+<li>Decided which genomes to use and obtained them from the NCBI database</li>
+<li>Coding
+<ul>
+<li>Make a database</li>
+<li>Get the query sequence</li>
+<li>Run BLAST</li>
+<li>Joining blast table with annotation table</li>
+</ul></li>
 </ul>
+<p>The code was based on week 01 assignment from Fish546 Spring 23.</p>
 </section>
-<section id="code" class="slide level2">
-<h2>Code</h2>
-<p>When you click the <strong>Render</strong> button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:</p>
-<div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 2</code></pre>
-</div>
-</div>
+<section id="preliminary-results" class="slide level2">
+<h2>Preliminary Results</h2>
+<p>Histogram for the Protein Sequences</p>
+
+<img data-src="sar11pres05_files/figure-revealjs/unnamed-chunk-1-1.png" width="960" class="r-stretch"></section>
+<section id="next-steps" class="slide level2">
+<h2>Next Steps:</h2>
+<ul>
+<li>fasta to tab-delimited for the protein sequences to finish the joining</li>
+<li>figure out how this process can be done for multiple protein sequences from other SAR11 sequences
+<ul>
+<li>which sequences to be chosen?</li>
+</ul></li>
+<li>tyding up the figures that come from other pieces of code (understanding what the code does)</li>
+</ul>
 <div class="footer footer-default">
 
 </div>

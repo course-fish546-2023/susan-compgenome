@@ -14,21 +14,51 @@ library(Biostrings)
 library(tm)
 ```
 
-## Quarto
+## **SAR11 Bacteria Comparative Genomics Project**
 
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
+SAR11 is a group of small, carbon-oxidizing bacteria that reach a global estimated population size of 2.4×10^28^ cells-approximately 25% of all plankton. They play a key role in the ocean's environment.
 
-## Bullets
+The goal of this comparative genomics project is to find presense and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.
 
-When you click the **Render** button a document will be generated that includes:
+## Methods
 
--   Content authored with markdown
--   Output from executable code
+-   Determine goal of the project
+-   Decided which genomes to use and obtained them from the NCBI database
+-   Coding
+    -   Make a database
+    -   Get the query sequence
+    -   Run BLAST
+    -   Joining blast table with annotation table
 
-## Code
+The code was based on week 01 assignment from Fish546 Spring 23.
 
-When you click the **Render** button a presentation will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Preliminary Results
+
+Histogram for the Protein Sequences
 
 ```{r}
-1 + 1
+# Read FASTA file
+fasta_file <- "../data_raw/012276695protein.faa"  
+psequences <- readDNAStringSet(fasta_file)
+
+# Calculate sequence lengths
+psequence_lengths <- width(psequences)
+
+# Create a data frame
+psequence_lengths_df <- data.frame(Length = psequence_lengths)
+
+# Plot histogram using ggplot2
+ggplot(psequence_lengths_df, aes(x = Length)) +
+  geom_histogram(binwidth = 1, color = "purple", fill = "red", alpha = 0.75) +
+  labs(title = "Histogram of P-Sequence Lengths",
+       x = "P-Sequence Length",
+       y = "Frequency") +
+  theme_minimal()
 ```
+
+## Next Steps:
+
+-   fasta to tab-delimited for the protein sequences to finish the joining
+-   figure out how this process can be done for multiple protein sequences from other SAR11 sequences
+    -   which sequences to be chosen?
+-   tyding up the figures that come from other pieces of code (understanding what the code does)
