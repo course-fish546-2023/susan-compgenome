@@ -102,8 +102,50 @@ ggplot(psequence_lengths_df, aes(x = Length)) +
   labs(title = "Histogram of P-Sequence Lengths",
        x = "P-Sequence Length",
        y = "Frequency") +
-  theme_minimal()
+  theme_minimal() 
 ```
+
+
+##PLAYING AROUND
+
+```{r}
+# Read FASTA file
+
+blast_file <- read.csv("../output/95-45_blastp.tab", sep = '\t', header = FALSE) 
+
+#Extract columns desired
+
+blast2.0_file <- blast_file[, c("V1", "V11")]
+
+#Make into dataframe
+
+blast2.0_file_df <- data_frame(blast2.0_file)
+
+# Plot histogram using ggplot2
+
+ggplot(blast2.0_file_df, aes(x = V11)) +
+  geom_histogram(binwidth = 50, fill = "blue", alpha = 0.5) +
+  labs(title = "Histogram of V11", x = "V11", y = "Frequency")
+
+# Plot boxplot using ggplot2
+
+ggplot(blast2.0_file_df, aes(x = V1, y = V11)) +
+  geom_boxplot() +
+  xlab("Group") +
+  ylab("Value") +
+  ggtitle("Boxplot of V11 by V1")
+
+
+# Plot histogram using ggplot2
+ggplot(blast2.0_file_df, aes(x = Length)) +
+  geom_histogram(binwidth = 1, color = "purple", fill = "red", alpha = 0.75) +
+  labs(title = "Histogram of P-Sequence Lengths",
+       x = "P-Sequence Length",
+       y = "Frequency") +
+  theme_minimal() 
+```
+
+
 
 #Boxplots for Query Sequences
 ```{r}
@@ -176,17 +218,19 @@ wc -l ../output/95-45_blastp.tab
 
 
 ```{bash}
-!perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. != 1) {print "\n"} s/ |$/\t/; $count++; $_ .= "\t";} else {s/ //g; $len += length($_)} print $_;} print "\n"; warn "\nConverted $count FASTA records in $. lines to tabular format\nTotal sequence length: $len\n\n";' ../data_raw/012276695protein.faa > ../output/95protein.tab
+perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. != 1) {print "\n"} s/ |$/\t/; $count++; $_ .= "\t";} else {s/ //g; $len += length($_)} print $_;} print "\n"; warn "\nConverted $count FASTA records in $. lines to tabular format\nTotal sequence length: $len\n\n";' ../data_raw/012276695protein.faa > ../output/95protein.tab
 ```
 
 
 
 ```{r}
 bltabl <- read.csv("../output/95-45_blastp.tab", sep = '\t', header = FALSE)
+colnames(bltabl) <- c("V1", "V2", "V3","V4", "V5", "V6", "V7", "V8", "V9", "V10","V11", "V12")
 ```
 
 ```{r}
-spgo <- read.csv("../data_raw/012276695protein.faa", sep = '\t', header = TRUE)
+spgo <- read.csv("../output/95protein.tab", sep = '\t', header = TRUE)
+colnames(spgo) <- c("V1", "V2", "V3")
 ```
 
 ```{r}
@@ -196,12 +240,25 @@ str(spgo)
 ```{r}
 kbl(
 head(
-  left_join(bltabl, spgo,  by = c("V3" = "Entry")) %>%
-  select(V1, V3, V13, Protein.names, Organism, Gene.Ontology..biological.process., Gene.Ontology.IDs) %>% mutate(V1 = str_replace_all(V1, 
+  left_join(bltabl, spgo,  by = c("V1" = "Entry")) %>%
+  select(V1, V2, V3) %>% mutate(V1 = str_replace_all(V1, 
             pattern = "solid0078_20110412_FRAG_BC_WHITE_WHITE_F3_QV_SE_trimmed", replacement = "Ab"))
 )
 ) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+
+kbl(
+  head(
+    left_join(bltabl, spgo, by = c("V1" = "Entry")) %>%
+      select(V1, V2, V3) %>%
+      mutate(V1 = str_replace_all(V1, pattern = "solid0078_20110412_FRAG_BC_WHITE_WHITE_F3_QV_SE_trimmed", replacement = "Ab")) %>%
+      rename(First_Column = V1, Second_Column = V2, Third_Column = V3)
+  )
+) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+
 ```
 
 ```{r}
