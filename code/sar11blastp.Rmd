@@ -19,22 +19,23 @@ library(tm)
 ##This is the code to dowload the software. My computer had this software installed already. 
 
 ```{bash}
-cd /home/joyvan/applications
-curl -O https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.13.0+-x64-linux.tar.gz
+#cd /home/joyvan/applications
+#curl -O https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.13.0+-x64-linux.tar.gz
 
 ```
 
 ```{bash}
-cd /home/joyvan/applications
-tar -xf ncbi-blast-2.13.0+-x64-linux.tar.gz
+#cd /home/joyvan/applications
+#tar -xf ncbi-blast-2.13.0+-x64-linux.tar.gz
 ```
+
 ```{bash}
-~/applications/ncbi-blast-2.13.0+/bin/blastx -h
+#~/applications/ncbi-blast-2.13.0+/bin/blastx -h
 ```
 
 # Make a database
 
-Comparing protein sequence 012276695protein.faa (for easier terms called 95) to 000012345.1protein.faa (for easier terms called 45). First creating a database for 95.  
+## Comparing protein sequence 012276695protein.faa (for easier terms called 95) to 000012345.1protein.faa (for easier terms called 45). First creating a database for 95.  
 
 ```{bash}
 /home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
@@ -43,7 +44,7 @@ Comparing protein sequence 012276695protein.faa (for easier terms called 95) to 
 -out ../blastdb/95-protein
 ```
 
-Comparing 95 to 45. 
+## Running BLAST. Comparing 95 to 45. 
 ```{bash}
 /home/shared/ncbi-blast-2.11.0+/bin/blastp \
 -query ../data_raw/000012345.1protein.faa \
@@ -55,7 +56,7 @@ Comparing 95 to 45.
 -outfmt 6
 ```
 
-Secondly creating a database for 45.
+## Secondly creating a database for 45.
 ```{bash}
 /home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
 -in ../data_raw/000012345.1protein.faa \
@@ -63,7 +64,7 @@ Secondly creating a database for 45.
 -out ../blastdb/45-protein
 ```
 
-Comparing 45 to 95.
+## Running BLAST. Comparing 45 to 95.
 ```{bash}
 /home/shared/ncbi-blast-2.11.0+/bin/blastp \
 -query ../data_raw/012276695protein.faa \
@@ -84,29 +85,7 @@ echo "How many sequences are there?"
 grep -c ">" ../data_raw/012276695protein.faa
 ```
 
-#Histogram for the Protein Sequences
-```{r}
-# Read FASTA file
-fasta_file <- "../data_raw/012276695protein.faa"  
-psequences <- readDNAStringSet(fasta_file)
-
-# Calculate sequence lengths
-psequence_lengths <- width(psequences)
-
-# Create a data frame
-psequence_lengths_df <- data.frame(Length = psequence_lengths)
-
-# Plot histogram using ggplot2
-ggplot(psequence_lengths_df, aes(x = Length)) +
-  geom_histogram(binwidth = 1, color = "purple", fill = "red", alpha = 0.75) +
-  labs(title = "Histogram of P-Sequence Lengths",
-       x = "P-Sequence Length",
-       y = "Frequency") +
-  theme_minimal() 
-```
-
-
-##PLAYING AROUND
+##Histogram for the BLAST file of 95-45
 
 ```{r}
 # Read FASTA file
@@ -115,108 +94,25 @@ blast_file <- read.csv("../output/95-45_blastp.tab", sep = '\t', header = FALSE)
 
 #Extract columns desired
 
-blast2.0_file <- blast_file[, c("V1", "V11")]
+blast2.0_file <- blast_file[, c("V1", "V2", "V11", "V12")]
 
 #Make into dataframe
 
 blast2.0_file_df <- data_frame(blast2.0_file)
+colnames(blast2.0_file_df) <- c("Query", "Database", "Eval", "Score")
 
 # Plot histogram using ggplot2
 
-ggplot(blast2.0_file_df, aes(x = V11)) +
+ggplot(blast2.0_file_df, aes(x = Score)) +
   geom_histogram(binwidth = 50, fill = "blue", alpha = 0.5) +
-  labs(title = "Histogram of V11", x = "V11", y = "Frequency")
+  labs(title = "Histogram of Score", x = "Score", y = "Frequency")
 
-# Plot boxplot using ggplot2
-
-ggplot(blast2.0_file_df, aes(x = V1, y = V11)) +
-  geom_boxplot() +
-  xlab("Group") +
-  ylab("Value") +
-  ggtitle("Boxplot of V11 by V1")
-
-
-# Plot histogram using ggplot2
-ggplot(blast2.0_file_df, aes(x = Length)) +
-  geom_histogram(binwidth = 1, color = "purple", fill = "red", alpha = 0.75) +
-  labs(title = "Histogram of P-Sequence Lengths",
-       x = "P-Sequence Length",
-       y = "Frequency") +
-  theme_minimal() 
-```
-
-
-
-#Boxplots for Query Sequences
-```{r}
-# Read FASTA file
-fasta_file <- "../data_raw/012276695protein.faa"
-sequences <- readDNAStringSet(fasta_file)
-
-# Calculate base composition
-base_composition <- alphabetFrequency(sequences, baseOnly = TRUE)
-
-# Convert to data frame and reshape for ggplot2
-base_composition_df <- as.data.frame(base_composition)
-base_composition_df$ID <- rownames(base_composition_df)
-base_composition_melted <- reshape2::melt(base_composition_df, id.vars = "ID", variable.name = "Base", value.name = "Count")
-
-# Plot base composition bar chart using ggplot2
-ggplot(base_composition_melted, aes(x = Base, y = Count, fill = Base)) +
-  geom_bar(stat = "identity", position = "dodge", color = "black") +
-  labs(title = "Base Composition",
-       x = "Base",
-       y = "Count") +
-  theme_minimal() +
-  scale_fill_manual(values = c("A" = "purple", "C" = "orange", "G" = "pink", "T" = "yellow"))
-```
-
-
-#Run BLAST
-
-```{bash}
-/home/shared/ncbi-blast-2.11.0+/bin/blastp \
--query ../data_raw/000012345.1protein.faa \
--db ../blastdb/95-protein \
--out ../output/95-45_blastp.tab \
--evalue 1E-20 \
--num_threads 20 \
--max_target_seqs 1 \
--outfmt 6
-```
-
-```{bash}
-head -2 ../output/95-45_blastp.tab
-wc -l ../output/95-45_blastp.tab
-```
-
-#Joining blast table with annotation table
-
-```{bash}
-head ../data_raw/012276695protein.faa
-echo "How many sequences are there?"
-grep -c ">" ../data_raw/012276695protein.faa
-```
-```{bash}
-/home/shared/ncbi-blast-2.11.0+/bin/blastp \
--query ../data_raw/000012345.1protein.faa \
--db ../blastdb/95-protein \
--out ../output/95-45_blastp.tab \
--evalue 1E-20 \
--num_threads 20 \
--max_target_seqs 1 \
--outfmt 6
-```
-
-```{bash}
-head -2 ../output/95-45_blastp.tab
-wc -l ../output/95-45_blastp.tab
 ```
 
 
 #Joining blast table with annotation table
 
-
+## fasta to tab-delimited
 ```{bash}
 perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. != 1) {print "\n"} s/ |$/\t/; $count++; $_ .= "\t";} else {s/ //g; $len += length($_)} print $_;} print "\n"; warn "\nConverted $count FASTA records in $. lines to tabular format\nTotal sequence length: $len\n\n";' ../data_raw/012276695protein.faa > ../output/95protein.tab
 ```
@@ -224,50 +120,63 @@ perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. 
 
 
 ```{r}
+# Read out the blast file into csv
 bltabl <- read.csv("../output/95-45_blastp.tab", sep = '\t', header = FALSE)
-colnames(bltabl) <- c("V1", "V2", "V3","V4", "V5", "V6", "V7", "V8", "V9", "V10","V11", "V12")
+
+
+#Extract columns desired
+ bltabl_2.0 <- bltabl[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+bltabl2.0_df <- data_frame(bltabl_2.0)
+
+colnames(bltabl2.0_df) <- c("Query", "Database", "Eval", "Score")
+
 ```
 
 ```{r}
 spgo <- read.csv("../output/95protein.tab", sep = '\t', header = TRUE)
-colnames(spgo) <- c("V1", "V2", "V3")
+colnames(spgo) <- c("Database", "Protein", "Coding_Sequence")
 ```
 
 ```{r}
-str(spgo)
-```
 
-```{r}
-kbl(
-head(
-  left_join(bltabl, spgo,  by = c("V1" = "Entry")) %>%
-  select(V1, V2, V3) %>% mutate(V1 = str_replace_all(V1, 
-            pattern = "solid0078_20110412_FRAG_BC_WHITE_WHITE_F3_QV_SE_trimmed", replacement = "Ab"))
-)
-) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+# Join the data frames
+joined_df <- left_join(bltabl2.0_df, spgo, by = c("Database" = "Database"))
 
-
-kbl(
-  head(
-    left_join(bltabl, spgo, by = c("V1" = "Entry")) %>%
-      select(V1, V2, V3) %>%
-      mutate(V1 = str_replace_all(V1, pattern = "solid0078_20110412_FRAG_BC_WHITE_WHITE_F3_QV_SE_trimmed", replacement = "Ab")) %>%
-      rename(First_Column = V1, Second_Column = V2, Third_Column = V3)
-  )
-) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-
+# Print the table with kable
+kable(joined_df, caption = "Joined data frame with kable formatting") 
+  
 
 ```
 
 ```{r}
-left_join(bltabl, spgo,  by = c("V3" = "Entry")) %>%
-  select(V1, V3, V13, Protein.names, Organism, Gene.Ontology..biological.process., Gene.Ontology.IDs) %>% mutate(V1 = str_replace_all(V1, 
-            pattern = "solid0078_20110412_FRAG_BC_WHITE_WHITE_F3_QV_SE_trimmed", replacement = "Ab")) %>%
-write_delim("../output/95_blast_annot_go.tab", delim = '\t')
+# Read joined blast table with annotation table
+joined_df <- left_join(bltabl2.0_df, spgo, by = c("Database" = "Database"))
+
+# Select the column of interest
+column_name <- "Protein"  # Replace with the name of the column of interest
+column_data <- joined_df[[column_name]]
+
+# Count the occurrences of the strings in the column
+string_counts <- table(column_data)
+
+# Convert to a data frame, sort by count, and select the top 10
+string_counts_df <- as.data.frame(string_counts)
+colnames(string_counts_df) <- c("String", "Count")
+string_counts_df <- string_counts_df[order(string_counts_df$Count, decreasing = TRUE), ]
+top_10_strings <- head(string_counts_df, n = 10)
+
+# Plot the top 10 most common strings using ggplot2
+ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Top 10 Protein hits",
+       x = column_name,
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  coord_flip()
+
 ```
 
-
-```{r}
-annot_tab <- read.csv("../output/blast_annot_go.tab", sep = '\t', header = TRUE)
