@@ -82,6 +82,36 @@ ggplot(psequence_lengths_df, aes(x = Length)) +
   theme_minimal()
 ```
 
+Visual for Joining blast table with annotation table
+
+```{r setup, include = TRUE}
+# Read joined blast table with annotation table
+joined_df <- left_join(bltabl2.0_df, spgo, by = c("Database" = "Database"))
+
+# Select the column of interest
+column_name <- "Protein"  # Replace with the name of the column of interest
+column_data <- joined_df[[column_name]]
+
+# Count the occurrences of the strings in the column
+string_counts <- table(column_data)
+
+# Convert to a data frame, sort by count, and select the top 10
+string_counts_df <- as.data.frame(string_counts)
+colnames(string_counts_df) <- c("String", "Count")
+string_counts_df <- string_counts_df[order(string_counts_df$Count, decreasing = TRUE), ]
+top_10_strings <- head(string_counts_df, n = 10)
+
+# Plot the top 10 most common strings using ggplot2
+ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Top 10 Protein hits",
+       x = column_name,
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  coord_flip()
+```
+
 ## Next Steps:
 
 -   fasta to tab-delimited for the protein sequences to finish the joining
