@@ -68,6 +68,10 @@ ggplot(blast2.0_file_df, aes(x = Score)) +
 
 ```
 
+## Histogram Figure
+
+![](images/Histo.png)
+
 ## Table for the combination of BLAST of 95-45
 
 ```{r, echo = TRUE}
@@ -98,6 +102,10 @@ joined_df <- left_join(bltabl2.0_df, spgo, by = c("Database" = "Database"))
 kable(head(joined_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
 ```
 
+## Table Figure
+
+![](images/Table.html)
+
 ## Plotting the top 10 Protein Hits
 
 ```{r, echo = TRUE}
@@ -127,6 +135,10 @@ ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String
   theme(legend.position = "none") +
   coord_flip()
 ```
+
+## Barplot Figure
+
+![](images/barplot.png)
 
 ## Next Steps:
 
