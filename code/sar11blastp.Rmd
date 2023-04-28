@@ -117,6 +117,7 @@ bltabl2.0_df <- data_frame(bltabl_2.0)
 
 colnames(bltabl2.0_df) <- c("Query", "Database", "Eval", "Score")
 ```
+
 Reading the file from 95 protein to CSV file.
 ```{r, eval=TRUE}
 spgo <- read.csv("../output/95protein.tab", sep = '\t', header = TRUE)
@@ -130,7 +131,7 @@ colnames(spgo) <- c("Database", "Protein", "Coding_Sequence")
 joined_df <- left_join(bltabl2.0_df, spgo, by = c("Database" = "Database"))
 
 # Print the table with kable
-kable(joined_df, caption = "Joined data frame with kable formatting") 
+kable(head(joined_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
   
 ```
 

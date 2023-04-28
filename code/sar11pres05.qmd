@@ -4,7 +4,7 @@ format: revealjs
 editor: visual
 ---
 
-```{r}
+```{r setup, include = FALSE}
 library(knitr)
 library(tidyverse)
 library(kableExtra)
@@ -32,59 +32,75 @@ The goal of this comparative genomics project is to find presense and absence of
 
 The code was based on week 01 assignment from Fish546 Spring 23.
 
-#Obtaining initial data
+## Code 1.1
 
-##Focused on two main genomes that were cultures and full genomes/
+Created two plots and one table.
 
-```{bash}
-# Make a database
+In the following slides there will be:
 
-##Comparing protein sequence 012276695protein.faa (for easier terms called 95) to 000012345.1protein.faa (for easier terms called 45). First creating a database for 95.  
+-   Histogram for the Scoring for the comparing of two genomes
 
-/home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
--in ../data_raw/012276695protein.faa \
--dbtype prot \
--out ../blastdb/95-protein
-```
+-   Table of the joined annotation table and BLAST
 
-```{bash}
-/home/shared/ncbi-blast-2.11.0+/bin/blastp \
--query ../data_raw/000012345.1protein.faa \
--db ../blastdb/95-protein \
--out ../output/95-45_blastp.tab \
--evalue 1E-20 \
--num_threads 20 \
--max_target_seqs 1 \
--outfmt 6
-```
+-   Bar plot of the top 10 protein hits
 
-## Preliminary Results
+## Histogram for the BLAST file of 95-45
 
-Histogram for the Protein Sequences
-
-```{r setup, include = TRUE}
+```{r, echo = TRUE}
 # Read FASTA file
-fasta_file <- "../data_raw/012276695protein.faa"  
-psequences <- readDNAStringSet(fasta_file)
 
-# Calculate sequence lengths
-psequence_lengths <- width(psequences)
+blast_file <- read.csv("../output/95-45_blastp.tab", sep = '\t', header = FALSE) 
 
-# Create a data frame
-psequence_lengths_df <- data.frame(Length = psequence_lengths)
+#Extract columns desired
+
+blast2.0_file <- blast_file[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+blast2.0_file_df <- data_frame(blast2.0_file)
+colnames(blast2.0_file_df) <- c("Query", "Database", "Eval", "Score")
 
 # Plot histogram using ggplot2
-ggplot(psequence_lengths_df, aes(x = Length)) +
-  geom_histogram(binwidth = 1, color = "purple", fill = "red", alpha = 0.75) +
-  labs(title = "Histogram of P-Sequence Lengths",
-       x = "P-Sequence Length",
-       y = "Frequency") +
-  theme_minimal()
+
+ggplot(blast2.0_file_df, aes(x = Score)) +
+  geom_histogram(binwidth = 50, fill = "blue", alpha = 0.5) +
+  labs(title = "Histogram of Score", x = "Score", y = "Frequency")
+
 ```
 
-Visual for Joining blast table with annotation table
+## Table for the combination of BLAST of 95-45
 
-```{r setup, include = TRUE}
+```{r, echo = TRUE}
+#Having the comparison of 95 to 45 into a CSV file.
+
+# Read out the blast file into csv
+bltabl <- read.csv("../output/95-45_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+ bltabl_2.0 <- bltabl[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+bltabl2.0_df <- data_frame(bltabl_2.0)
+
+colnames(bltabl2.0_df) <- c("Query", "Database", "Eval", "Score")
+
+#Reading the file from 95 protein to CSV file.
+
+spgo <- read.csv("../output/95protein.tab", sep = '\t', header = TRUE)
+colnames(spgo) <- c("Database", "Protein", "Coding_Sequence")
+
+# Join the data frames
+joined_df <- left_join(bltabl2.0_df, spgo, by = c("Database" = "Database"))
+
+# Print the table with kable
+kable(head(joined_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+```
+
+## Plotting the top 10 Protein Hits
+
+```{r, echo = TRUE}
 # Read joined blast table with annotation table
 joined_df <- left_join(bltabl2.0_df, spgo, by = c("Database" = "Database"))
 

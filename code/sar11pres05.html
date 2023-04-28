@@ -27,6 +27,70 @@
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
     }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="sar11pres05_files/libs/revealjs/dist/theme/quarto.css" id="theme">
   <link href="sar11pres05_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -329,12 +393,6 @@
 </div>
 
 </section>
-<section class="slide level2">
-
-<div class="cell">
-
-</div>
-</section>
 <section id="sar11-bacteria-comparative-genomics-project" class="slide level2">
 <h2><strong>SAR11 Bacteria Comparative Genomics Project</strong></h2>
 <p>SAR11 is a group of small, carbon-oxidizing bacteria that reach a global estimated population size of 2.4×10<sup>28</sup> cells-approximately 25% of all plankton. They play a key role in the ocean’s environment.</p>
@@ -354,33 +412,201 @@
 </ul></li>
 </ul>
 <p>The code was based on week 01 assignment from Fish546 Spring 23.</p>
-<p>#Obtaining initial data</p>
-<p>##Focused on two main genomes that were cultures and full genomes/</p>
+</section>
+<section id="code-1.1" class="slide level2">
+<h2>Code 1.1</h2>
+<p>Created two plots and one table.</p>
+<p>In the following slides there will be:</p>
+<ul>
+<li><p>Histogram for the Scoring for the comparing of two genomes</p></li>
+<li><p>Table of the joined annotation table and BLAST</p></li>
+<li><p>Bar plot of the top 10 protein hits</p></li>
+</ul>
+</section>
+<section id="histogram-for-the-blast-file-of-95-45" class="slide level2">
+<h2>Histogram for the BLAST file of 95-45</h2>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Read FASTA file</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a>blast_file <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../output/95-45_blastp.tab"</span>, <span class="at">sep =</span> <span class="st">'</span><span class="sc">\t</span><span class="st">'</span>, <span class="at">header =</span> <span class="cn">FALSE</span>) </span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#Extract columns desired</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a>blast2<span class="fl">.0</span>_file <span class="ot">&lt;-</span> blast_file[, <span class="fu">c</span>(<span class="st">"V1"</span>, <span class="st">"V2"</span>, <span class="st">"V11"</span>, <span class="st">"V12"</span>)]</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#Make into dataframe</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a></span>
+<span id="cb1-11"><a href="#cb1-11"></a>blast2<span class="fl">.0</span>_file_df <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(blast2<span class="fl">.0</span>_file)</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="fu">colnames</span>(blast2<span class="fl">.0</span>_file_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Query"</span>, <span class="st">"Database"</span>, <span class="st">"Eval"</span>, <span class="st">"Score"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13"></a></span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="co"># Plot histogram using ggplot2</span></span>
+<span id="cb1-15"><a href="#cb1-15"></a></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="fu">ggplot</span>(blast2<span class="fl">.0</span>_file_df, <span class="fu">aes</span>(<span class="at">x =</span> Score)) <span class="sc">+</span></span>
+<span id="cb1-17"><a href="#cb1-17"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">50</span>, <span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb1-18"><a href="#cb1-18"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Score"</span>, <span class="at">x =</span> <span class="st">"Score"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
-Building a new DB, current time: 04/27/2023 10:07:19
-New DB name:   /home/shared/8TB_HDD_02/sggarcia/github/susan-compgenome/blastdb/95-protein
-New DB title:  ../data_raw/012276695protein.faa
-Sequence type: Protein
-Deleted existing Protein BLAST database named /home/shared/8TB_HDD_02/sggarcia/github/susan-compgenome/blastdb/95-protein
-Keep MBits: T
-Maximum file size: 1000000000B
-Adding sequences from FASTA; added 1414 sequences in 0.0347559 seconds.</code></pre>
 </div>
-</div>
+<img data-src="sar11pres05_files/figure-revealjs/unnamed-chunk-1-1.png" width="960" class="r-stretch"></section>
+<section id="table-for-the-combination-of-blast-of-95-45" class="slide level2">
+<h2>Table for the combination of BLAST of 95-45</h2>
 <div class="cell">
-<div class="cell-output cell-output-stdout">
-<pre><code>Warning: [blastp] Examining 5 or more matches is recommended</code></pre>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co">#Having the comparison of 95 to 45 into a CSV file.</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="co"># Read out the blast file into csv</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>bltabl <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../output/95-45_blastp.tab"</span>, <span class="at">sep =</span> <span class="st">'</span><span class="sc">\t</span><span class="st">'</span>, <span class="at">header =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5"></a></span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="co">#Extract columns desired</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a> bltabl_2<span class="fl">.0</span> <span class="ot">&lt;-</span> bltabl[, <span class="fu">c</span>(<span class="st">"V1"</span>, <span class="st">"V2"</span>, <span class="st">"V11"</span>, <span class="st">"V12"</span>)]</span>
+<span id="cb2-9"><a href="#cb2-9"></a></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#Make into dataframe</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a></span>
+<span id="cb2-12"><a href="#cb2-12"></a>bltabl2<span class="fl">.0</span>_df <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(bltabl_2<span class="fl">.0</span>)</span>
+<span id="cb2-13"><a href="#cb2-13"></a></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="fu">colnames</span>(bltabl2<span class="fl">.0</span>_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Query"</span>, <span class="st">"Database"</span>, <span class="st">"Eval"</span>, <span class="st">"Score"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15"></a></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co">#Reading the file from 95 protein to CSV file.</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a></span>
+<span id="cb2-18"><a href="#cb2-18"></a>spgo <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../output/95protein.tab"</span>, <span class="at">sep =</span> <span class="st">'</span><span class="sc">\t</span><span class="st">'</span>, <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="fu">colnames</span>(spgo) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Database"</span>, <span class="st">"Protein"</span>, <span class="st">"Coding_Sequence"</span>)</span>
+<span id="cb2-20"><a href="#cb2-20"></a></span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="co"># Join the data frames</span></span>
+<span id="cb2-22"><a href="#cb2-22"></a>joined_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(bltabl2<span class="fl">.0</span>_df, spgo, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Database"</span> <span class="ot">=</span> <span class="st">"Database"</span>))</span>
+<span id="cb2-23"><a href="#cb2-23"></a></span>
+<span id="cb2-24"><a href="#cb2-24"></a><span class="co"># Print the table with kable</span></span>
+<span id="cb2-25"><a href="#cb2-25"></a><span class="fu">kable</span>(<span class="fu">head</span>(joined_df, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">caption =</span> <span class="st">"Joined data frame with kable formatting (first 10 rows)"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<table>
+<caption>Joined data frame with kable formatting (first 10 rows)</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> Query </th>
+   <th style="text-align:left;"> Database </th>
+   <th style="text-align:right;"> Eval </th>
+   <th style="text-align:right;"> Score </th>
+   <th style="text-align:left;"> Protein </th>
+   <th style="text-align:left;"> Coding_Sequence </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> AAZ20826.1 </td>
+   <td style="text-align:left;"> QIZ21403.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 677 </td>
+   <td style="text-align:left;"> ketol-acid reductoisomerase [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MKMFYEKDADVDLIKSKKIAIFGYGSQGHAHALNLKDSGAKEVVVALRDGSASKAKAESKGLKVMGLSDAAEWAEVAMILTPDELQAAIYKNHIDQRIKPGTSIAFAHGLNIHYKLIEARKDLDVFMVAPKGPGHLVRSEFERGGGVPCLFAVHQDGTGKARDLALSYASAIGGGKSGIIETTFKDECETDLFGEQSVLCGGLVELIKNGFETLTEAGYEPEMAYFECLHEVKLIVDLIYEGGIANMNYSISNTAEYGEYVSGKKVVDSESKKRMKEVLADIQSGKFTKDWMKECEGGQKNFLKMRKDLADHPIEKVGAELRAMMPWIGKKKLIDSDKS </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20827.1 </td>
+   <td style="text-align:left;"> QIZ21402.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 338 </td>
+   <td style="text-align:left;"> acetolactate synthase small subunit [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MAKSKSAYSTPSKLGKIDTHIIVVWVDNEASVLSRVVGLFSGRGYNIESLAVAEVDQKNNLSRITIVTTGTPQVIEQIVLQLKKLVPVHKVGNFKREDKKVIFKEMALLKVVANSGKINKALNACKKYNPVILDQTNKSAVIQITALRREIDKLIKNLKPFGLVSASRTGAVAMTRGAEIFN </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20828.1 </td>
+   <td style="text-align:left;"> QIZ21401.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 1095 </td>
+   <td style="text-align:left;"> acetolactate synthase 3 large subunit [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MGNLYTGAEIVFKCLEDQKVDHIFGYPGGAVLPIYDELKNHPSIKHILVRHEQGAGHAAEGYARSSGKPGVVLVTSGPGATNVVTALTDAYMDSVPLVCISGQVPTHLIGTDAFQECDTTGITRPCTKHNWLVKDINDLPRIMHEAFEVATTGRPGPVLVDIPKDIQFAKAKYLKPKKEKKLNGKVLSKFNQKEIDQLVDLMKKSSKPVFYTGGGVINSGPGASELLRELVALTGFPITSTLQGLGAYPGDDNQFLGMLGMHGTYEANNAMHDCDLLINIGARFDDRITGKIDEFSPKSKKVHIDIDPSSINKIVKVDLAIVGDVSDVIKSTTKTLKKKNLNLEKSNKQKISKWWQQIQKWRTKQSLNFINSDKIIKPQHAVQRLYELTKNQDTYITTEVGQHQMWAAQHYKFNKPNRWMTSGGLGTMGYGLPAAIGVQVAHPKKLVVDIAGEASILMTMQEISTAVQYNLPVKIFILNNQYMGMVRQWQELLHEKNYSESYSEALPDFVKLAEAYGCVGIRAKDPSELDEKIEEMINIDRPVIFDCHVDQAENCYPMIPSGKPHNQMLLGPKDQEENKITGKGKSLV </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20829.1 </td>
+   <td style="text-align:left;"> QIZ21400.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 475 </td>
+   <td style="text-align:left;"> tRNA (adenosine(37)-N6)-dimethylallyltransferase MiaA [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MDKQSKIILISGPTASGKTNFAVKIAKKIQGEIINADSMQVYKKLKILTARPNKIEQKDIKHHLYGVIDLNKKFSTGQWLELATKKIKNIQKKKKIPILVGGTGLYFQSLINGLVKIPEIPLKFRNKVRLMSKREGQKKFYKKLLKLDPKVKDKFDPNDTQRSIRAYEIKSYTDNSMYNWLASTESEFKNSDFLKLFIETKREKLIERINLRTLNMINSGAINEVKKFLKLKIRKDQSVNKVIGIAELTQYLNHEVTLEEAKELISIKTRQYAKRQATWARTRMTSWKKIKPTRIGDFIKKLNKSLLKLDQ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20830.1 </td>
+   <td style="text-align:left;"> QIZ21399.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 838 </td>
+   <td style="text-align:left;"> Do family serine endopeptidase [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MNRIKKLFIIIFAISFASHVLAKDAPASFADLAEKLMPSVVNISTTTTVVTNANPFPGFEFPPGSPFADMFKEFGTPQTRKSAALGSGFIIDEKGVVITNNHVIQDAEDIVVRVGGDKEYKATIIGQDPLSDIAVLQIDSKEKFIPVSFGDSDKARIGDWVIAIGNPFGLGGTVTAGIISARNRSIGLSRYEDYIQTDASINSGNSGGPLFDMNGDVIGINTAILGKGGSIGIGFSIPSNSAKKVVSQLIEFGETKRGWLGVRIQVVTKEIADVEKLDEPRGALVASVAEKSPSDKAGIKAGDIILEFNGTKIKEMKELPIIVAQTEVGKTIEVKVWRNKKEITKKIKLGRLETSSDFKKKEPKDTKRETPEISEIKSLKIIVRPLNDNDIKERKLPNQTTGLVITNIGKNSPVDYLNVGDIIVEAQKKKIKSAKNLEDILDTVLKSNQKTILIVIYNNQNQRRYIGVKLD </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20831.1 </td>
+   <td style="text-align:left;"> QIZ21398.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 114 </td>
+   <td style="text-align:left;"> DUF2065 domain-containing protein [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MKELIIAFGLFLFIEGILYALFPSKMKSMLKKMELIKDTQLRSGGLVFAVIGFIIIWYIKS </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20832.1 </td>
+   <td style="text-align:left;"> QIZ21397.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 516 </td>
+   <td style="text-align:left;"> protease modulator HflC [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MKAQKILLPIIILIGALAFFSIFIVKEVNQAIVLQFGDPKKIILKPGLNFKIPFIQNVVFLDSRILNLDTPPAEVIASDQKRLIVDAFARFQIIDPLKFYISVGNERVARSRLATIINSRIRNVLGQQELQTLLSKDRSKQMSLIQEGVNAEAQKFGIKIVDVRIKRADLPQANSEAIYRRMQTEREREAKEFRARGAEMAVTITSTADKDVSVLLANANKDSEIMKGQGDGERNKIFADAFGRDPEFFAFYRAMQAYETALIGGDTSVILSPDSEFFKFFGNIKPKSQ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20833.1 </td>
+   <td style="text-align:left;"> QIZ21396.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 640 </td>
+   <td style="text-align:left;"> FtsH protease activity modulator HflK [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MSDDFQGRGGSPWGTPPGGGNGSGKGPTPPDIDALIRDIQSKINRFLPGGSSSGKKPIGLILIILAFVWLASGLYRVGPDEQGVVLRFGKFVKTTQPGLHYHIPIPVETVQTPKVTKVNRIDIGFRSERDSGFSQGGGVADVPQESLMLTGDENIVNIDFSVFWVIKDAGKFLFEIQDPEGTVKAAAETAMREVIAKSKIQPVLTEGRALIEVETQEIIQSILDEYNSGIQITQVQTQKADPPDQVIDAFRDVQAARADMERSKNEAEAYANDVIPRARGEAARIMQAAEAYKQKVVAQAEGEASRFVSIYNEYAKAKEVTQERMYLETMEKVLADIDKVIIEKNAGAGVVPYLPLPELGKKKASN </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20834.1 </td>
+   <td style="text-align:left;"> QIZ21395.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 549 </td>
+   <td style="text-align:left;"> ATP-binding protein [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MTDKKPELSDAMKKKLEPRKFTKNPILGTKFTIAVSSAKGGVGKSTFATNLALALKQIGCKVGLLDADIYGPSIPKMFDINEKPKSDGQTLTPITKYDIQCMSIGFLADQQTPMIWRGPMVTSAIKTFTQKVGWKDLDFIIVDMPPGTGDTQLTFSQEIKIDGAIIVSTPQEVALLDVKRGIKMFDKLGVKILGLVDNMSYFTGDDGKKYKIFGEGGVKRTAKEFEKEFLGEIPINPEVGKCGDEGKPIVEANPEHEISKIYLDFAKKIKSTYL </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> AAZ20835.1 </td>
+   <td style="text-align:left;"> QIZ21388.1 </td>
+   <td style="text-align:right;"> 0 </td>
+   <td style="text-align:right;"> 617 </td>
+   <td style="text-align:left;"> FAD-dependent thymidylate synthase [Candidatus Pelagibacter giovannonii] </td>
+   <td style="text-align:left;"> MKLTTEQTQEIKDQQSQQNQTKRVTVPALESILYEAMPALDHGFVRVVDYMGDDSSIVQSARVSYGKGTKQVSTDAGLIKYLMRHWHSTPFEMCEIKYHVKLPIFIARQWIRHRTANVNEYSARYSILDKEFYLPSAKNLAAQSSINRQGRGDVIEGEQAKEVLELLKNDAEQTYDNYEMMLNQRFDGSTINENKKGLARELARMNLTLNTYTQWYWKTDLLNLMNFLRLRADSHAQYEIRVYADIMLDTVKKWVPITYDAFMDYRVGGTEVSAKGKAIIQKFIKGENVDISSSGLSKREWNELMQAFNLDDKKV </td>
+  </tr>
+</tbody>
+</table>
+
 </div>
 </div>
 </section>
-<section id="preliminary-results" class="slide level2">
-<h2>Preliminary Results</h2>
-<p>Histogram for the Protein Sequences</p>
+<section id="plotting-the-top-10-protein-hits" class="slide level2">
+<h2>Plotting the top 10 Protein Hits</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Read joined blast table with annotation table</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>joined_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(bltabl2<span class="fl">.0</span>_df, spgo, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Database"</span> <span class="ot">=</span> <span class="st">"Database"</span>))</span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="co"># Select the column of interest</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>column_name <span class="ot">&lt;-</span> <span class="st">"Protein"</span>  <span class="co"># Replace with the name of the column of interest</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>column_data <span class="ot">&lt;-</span> joined_df[[column_name]]</span>
+<span id="cb3-7"><a href="#cb3-7"></a></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co"># Count the occurrences of the strings in the column</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>string_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(column_data)</span>
+<span id="cb3-10"><a href="#cb3-10"></a></span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co"># Convert to a data frame, sort by count, and select the top 10</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>string_counts_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(string_counts)</span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="fu">colnames</span>(string_counts_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"String"</span>, <span class="st">"Count"</span>)</span>
+<span id="cb3-14"><a href="#cb3-14"></a>string_counts_df <span class="ot">&lt;-</span> string_counts_df[<span class="fu">order</span>(string_counts_df<span class="sc">$</span>Count, <span class="at">decreasing =</span> <span class="cn">TRUE</span>), ]</span>
+<span id="cb3-15"><a href="#cb3-15"></a>top_10_strings <span class="ot">&lt;-</span> <span class="fu">head</span>(string_counts_df, <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb3-16"><a href="#cb3-16"></a></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="co"># Plot the top 10 most common strings using ggplot2</span></span>
+<span id="cb3-18"><a href="#cb3-18"></a><span class="fu">ggplot</span>(top_10_strings, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(String, <span class="sc">-</span>Count), <span class="at">y =</span> Count, <span class="at">fill =</span> String)) <span class="sc">+</span></span>
+<span id="cb3-19"><a href="#cb3-19"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb3-20"><a href="#cb3-20"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 10 Protein hits"</span>,</span>
+<span id="cb3-21"><a href="#cb3-21"></a>       <span class="at">x =</span> column_name,</span>
+<span id="cb3-22"><a href="#cb3-22"></a>       <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb3-23"><a href="#cb3-23"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb3-24"><a href="#cb3-24"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb3-25"><a href="#cb3-25"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
-<img data-src="sar11pres05_files/figure-revealjs/setup-1.png" width="960" class="r-stretch"></section>
+</div>
+<img data-src="sar11pres05_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"></section>
 <section id="next-steps" class="slide level2">
 <h2>Next Steps:</h2>
 <ul>
