@@ -137,7 +137,8 @@ kable(head(joined_df, n = 10), caption = "Joined data frame with kable formattin
 
 ```{r, eval=TRUE}
 # Read joined blast table with annotation table
-joined_df <- left_join(bltabl2.0_df, spgo, by = c("Database" = "Database"))
+joined_df <- left_join(bltabl2.0_df, spgo, by = "Database")
+#c("Database" = "Database"))
 
 # Select the column of interest
 column_name <- "Protein"  # Replace with the name of the column of interest
