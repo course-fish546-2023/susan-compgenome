@@ -20,3 +20,20 @@ data <- read.faa("../agenome-ncbi_dataset/ncbi-dataset/data/GCF_900177485.1/prot
 #8.
 #9.
 #10.
+# Set the path to the directory containing the files to extract
+source_dir <- "../agenome-project/data"
+
+
+# Set the path to the directory where the extracted files will be placed
+destination_dir <- "../agenome-project/data-intermediate"
+
+# Extract all files from the source directory and its subdirectories
+files_to_move <- list.files(source_dir, recursive = TRUE, full.names = TRUE)
+
+# Create the destination directory if it doesn't already exist
+if (!dir.exists(destination_dir)) {
+  dir.create(destination_dir)
+}
+
+# Move the extracted files to the destination directory
+file.copy(files_to_move, destination_dir, recursive = TRUE)
