@@ -44,12 +44,8 @@ find ../data_raw/ -type f -name "*.faa" -print0 | xargs -0 -I {} bash -c 'input_
 
 ```
 
-```{bash}
-find ../data_raw/ -type f -name "G*.faa" | head
 
-```
 
-\
 This code snippet below is a shell command that performs protein sequence alignment using the BLASTP program from the NCBI BLAST+ suite. It searches for files with specific names, then runs the **`blastp`** command on each file with specified parameters. Let's break it down step by step:
 
 1.  **`find ../data_raw/ -type f -name "G*.faa"`**: The **`find`** command searches for files in the **`../data_raw/`** directory and its subdirectories. It looks for regular files (**`-type f`**) with names starting with "G" and ending in **`.faa`** (**`-name "G*.faa"`**).
@@ -79,16 +75,6 @@ This code snippet below is a shell command that performs protein sequence alignm
 In summary, this code snippet finds all **`.faa`** files in the **`../data_raw/`** directory and its subdirectories with names starting with "G" and ending in **`.1_protein.faa`**, and then runs the **`blastp`** command on each file to perform protein sequence alignment against the specified database. The results are saved in tabular format in the **`../output/`** directory with a specified E-value threshold and other parameters.
 
 
-```{r, engine='bash'}
-find ../data_raw/ -type f -name "G*.faa" \
-| xargs basename -s .1_protein.faa | xargs -I{} \
-echo ../data_raw/{}/{}_protein.faa | head
-
-```
-
-
-../data_raw/GCF_028109205.1/GCF_028109205.1_protein.faa
-
 
 ```{r, engine='bash'}
 find ../data_raw/ -type f -name "G*.faa" \
@@ -102,7 +88,6 @@ find ../data_raw/ -type f -name "G*.faa" \
 -max_target_seqs 1 \
 -outfmt 6
 ```
-
 
 
 
