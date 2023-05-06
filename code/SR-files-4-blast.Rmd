@@ -78,9 +78,21 @@ This code snippet below is a shell command that performs protein sequence alignm
 
 In summary, this code snippet finds all **`.faa`** files in the **`../data_raw/`** directory and its subdirectories with names starting with "G" and ending in **`.1_protein.faa`**, and then runs the **`blastp`** command on each file to perform protein sequence alignment against the specified database. The results are saved in tabular format in the **`../output/`** directory with a specified E-value threshold and other parameters.
 
+
 ```{r, engine='bash'}
 find ../data_raw/ -type f -name "G*.faa" \
 | xargs basename -s .1_protein.faa | xargs -I{} \
+echo ../data_raw/{}/{}_protein.faa | head
+
+```
+
+
+../data_raw/GCF_028109205.1/GCF_028109205.1_protein.faa
+
+
+```{r, engine='bash'}
+find ../data_raw/ -type f -name "G*.faa" \
+| xargs basename -s _protein.faa | xargs -I{} \
 /home/shared/ncbi-blast-2.11.0+/bin/blastp \
 -query ../data_raw/{}/{}_protein.faa \
 -db ../blastdb/95-protein \
@@ -90,3 +102,38 @@ find ../data_raw/ -type f -name "G*.faa" \
 -max_target_seqs 1 \
 -outfmt 6
 ```
+
+
+
+
+
+```{r, engine='bash'}
+#!/bin/bash
+
+data_raw_path="../data_raw"
+blastdb_path="../blastdb/95-protein"
+output_path="../output"
+evalue="1E-20"
+num_threads="30"
+max_target_seqs="1"
+outfmt="6"
+
+blastp_exec="/home/shared/ncbi-blast-2.11.0+/bin/blastp"
+
+for file in "$data_raw_path"/G*.faa; do
+    base_name=$(basename "$file" .1_protein.faa)
+    query_file="$data_raw_path/$base_name/${base_name}_protein.faa"
+    output_file="$output_path/${base_name}_95_blastp.tab"
+
+    "$blastp_exec" \
+        -query "$query_file" \
+        -db "$blastdb_path" \
+        -out "$output_file" \
+        -evalue "$evalue" \
+        -num_threads "$num_threads" \
+        -max_target_seqs "$max_target_seqs" \
+        -outfmt "$outfmt"
+done
+```
+
+
