@@ -1,0 +1,92 @@
+---
+title: "Getting fa files"
+output: html_document
+date: "2023-05-06"
+---
+
+This code takes file in each genome dir and makes new file with genome prefix for example
+
+```         
+../data_raw/GCA_028115085.1/protein.faa
+../data_raw/GCA_028115085.1/GCA_028115085.1_protein.faa
+```
+
+Specfically, ghis code snippet is a shell command that finds and copies files in a directory structure while renaming them. Let me break it down for you step by step:
+
+1.  **`find ../data_raw/ -type f -name "*.faa" -print0`**: The **`find`** command searches for files in the **`../data_raw/`** directory and its subdirectories. It looks for regular files (**`-type f`**) with names ending in **`.faa`** (**`-name "*.faa"`**). The **`-print0`** flag prints the results separated by null characters, which is useful when filenames contain spaces or special characters.
+
+2.  **`|`**: The pipe (**`|`**) symbol is used to pass the output of the **`find`** command to the next command, **`xargs`**.
+
+3.  **`xargs -0 -I {}`**: The **`xargs`** command reads items from standard input, separated by null characters (because of the **`-0`** flag). For each input item, it runs the following command, replacing occurrences of **`{}`** with the input item. The **`-I {}`** flag specifies the placeholder for the input item in the command.
+
+4.  **`bash -c '...'`**: This part runs a Bash command specified as a string. It defines several variables and runs a copy (**`cp`**) command.
+
+5.  **`input_file="{}"`**: This sets the **`input_file`** variable to the current file path, which comes from the output of the **`find`** command.
+
+6.  **`output_file="$(dirname "$input_file")/$(basename "$(dirname "$input_file")")_$(basename "$input_file")"`**: This line constructs the output file path by combining the following parts:
+
+    -   **`$(dirname "$input_file")`**: This extracts the directory path of the input file.
+
+    -   **`$(basename "$(dirname "$input_file")")`**: This extracts the name of the input file's parent directory.
+
+    -   **`_`**: This is a separator to make the output file name more readable.
+
+    -   **`$(basename "$input_file")`**: This extracts the name of the input file.
+
+    The output file path has the format: **`<input_file_directory>/<parent_directory_name>_<input_file_name>`**.
+
+7.  **`cp "$input_file" "$output_file"`**: This copies the input file to the output file, effectively renaming it according to the defined naming scheme.
+
+In summary, this code snippet finds all **`.faa`** files in the **`../data_raw/`** directory and its subdirectories, and then copies them while renaming them to include their parent directory name in the file name.
+
+```{bash}
+find ../data_raw/ -type f -name "*.faa" -print0 | xargs -0 -I {} bash -c 'input_file="{}"; output_file="$(dirname "$input_file")/$(basename "$(dirname "$input_file")")_$(basename "$input_file")"; cp "$input_file" "$output_file"'
+
+```
+
+```{bash}
+find ../data_raw/ -type f -name "G*.faa" | head
+
+```
+
+\
+This code snippet below is a shell command that performs protein sequence alignment using the BLASTP program from the NCBI BLAST+ suite. It searches for files with specific names, then runs the **`blastp`** command on each file with specified parameters. Let's break it down step by step:
+
+1.  **`find ../data_raw/ -type f -name "G*.faa"`**: The **`find`** command searches for files in the **`../data_raw/`** directory and its subdirectories. It looks for regular files (**`-type f`**) with names starting with "G" and ending in **`.faa`** (**`-name "G*.faa"`**).
+
+2.  **`|`**: The pipe (**`|`**) symbol is used to pass the output of the **`find`** command to the next command, **`xargs`**.
+
+3.  **`xargs basename -s .1_protein.faa`**: **`xargs`** reads the file paths from the **`find`** command and passes them to the **`basename`** command. The **`basename`** command removes the specified suffix (**`.1_protein.faa`**) from each file name. This step is used to extract the base name of the files, without the directory path and the file extension.
+
+4.  **`| xargs -I{} /home/shared/ncbi-blast-2.11.0+/bin/blastp`**: The modified file names are passed to the next **`xargs`** command. The **`-I {}`** flag specifies the placeholder for the input item (the base name of the file) in the subsequent command. The subsequent command is the **`blastp`** executable from the NCBI BLAST+ suite.
+
+5.  The following parameters are provided to the **`blastp`** command:
+
+    -   **`-query ../data_raw/{}/{}_protein.faa`**: Specifies the input query file, using the base name from the previous step.
+
+    -   **`-db ../blastdb/95-protein`**: Specifies the protein database to search against.
+
+    -   **`-out ../output/{}_95_blastp.tab`**: Specifies the output file, using the base name from the previous step.
+
+    -   **`-evalue 1E-20`**: Sets the E-value threshold for reporting alignments. Lower E-values indicate more significant alignments.
+
+    -   **`-num_threads 30`**: Specifies the number of threads to use for the search (30 in this case).
+
+    -   **`-max_target_seqs 1`**: Limits the reported alignments to the best one for each query sequence.
+
+    -   **`-outfmt 6`**: Specifies the output format as tabular (columns include query ID, subject ID, percentage identity, alignment length, etc.).
+
+In summary, this code snippet finds all **`.faa`** files in the **`../data_raw/`** directory and its subdirectories with names starting with "G" and ending in **`.1_protein.faa`**, and then runs the **`blastp`** command on each file to perform protein sequence alignment against the specified database. The results are saved in tabular format in the **`../output/`** directory with a specified E-value threshold and other parameters.
+
+```{r, engine='bash'}
+find ../data_raw/ -type f -name "G*.faa" \
+| xargs basename -s .1_protein.faa | xargs -I{} \
+/home/shared/ncbi-blast-2.11.0+/bin/blastp \
+-query ../data_raw/{}/{}_protein.faa \
+-db ../blastdb/95-protein \
+-out ../output/{}_95_blastp.tab \
+-evalue 1E-20 \
+-num_threads 30 \
+-max_target_seqs 1 \
+-outfmt 6
+```
