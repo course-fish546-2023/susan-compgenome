@@ -2,7 +2,6 @@
 title: "sar11blastp.Rmd"
 output: html_document
 date: "2023-04-27"
-output: html_document
 style: tidyverse
 
 ---
@@ -19,47 +18,35 @@ library(tm)
 
 # Make a database
 
-Comparing protein sequence 012276695protein.faa (for easier terms called 95) to 000012345.1protein.faa (for easier terms called 45). First creating a database for 95.  
+Comparing protein sequence 000012345.1protein.faa (for easier terms called 45) to 012276695protein.faa (for easier terms called 95). First creating a database for 95.  
 ```{r, engine='bash'}
 /home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
--in ../data_raw/012276695protein.faa \
+-in ../data_raw/000012345.1protein.faa \
 -dbtype prot \
--out ../blastdb/95-protein
+-out ../blastdb/45-protein
 ```
 
 
-Running BLAST. Comparing 95 to 45. 
+Running BLAST. Comparing 45 to 95. 
 ```{r, engine='bash'}
 /home/shared/ncbi-blast-2.11.0+/bin/blastp \
--query ../data_raw/000012345.1protein.faa \
--db ../blastdb/95-protein \
--out ../output/95-45_blastp.tab \
+-query ../data_raw/012276695protein.faa \
+-db ../blastdb/45-protein \
+-out ../output/45-95_blastp.tab \
 -evalue 1E-20 \
 -num_threads 20 \
 -max_target_seqs 1 \
 -outfmt 6
 ```
 
-
-Running BLAST. Comparing 95 to 85.
-```{r, engine='bash'}
-/home/shared/ncbi-blast-2.11.0+/bin/blastp \
--query ../data_raw/900177485.1protein.faa \
--db ../blastdb/95-protein \
--out ../output/95-85_blastp.tab \
--evalue 1E-20 \
--num_threads 20 \
--max_target_seqs 1 \
--outfmt 6
-```
 
 
 #Get the query sequence
 
 ```{r, engine='bash'}
-head ../data_raw/012276695protein.faa
+head ../data_raw/000012345.1protein.faa
 echo "How many sequences are there?"
-grep -c ">" ../data_raw/012276695protein.faa
+grep -c ">" ../data_raw/000012345.1protein.faa
 ```
 
 ##Histogram for the BLAST file of 95-45
@@ -67,7 +54,7 @@ grep -c ">" ../data_raw/012276695protein.faa
 ```{r, eval=TRUE}
 # Read FASTA file
 
-blast_file <- read.csv("../output/95-45_blastp.tab", sep = '\t', header = FALSE) 
+blast_file <- read.csv("../output/45-95_blastp.tab", sep = '\t', header = FALSE) 
 
 #Extract columns desired
 
@@ -91,14 +78,14 @@ ggplot(blast2.0_file_df, aes(x = Score)) +
 
 fasta to tab-delimited
 ```{r, engine='bash'}
-perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. != 1) {print "\n"} s/ |$/\t/; $count++; $_ .= "\t";} else {s/ //g; $len += length($_)} print $_;} print "\n"; warn "\nConverted $count FASTA records in $. lines to tabular format\nTotal sequence length: $len\n\n";' ../data_raw/012276695protein.faa > ../output/95protein.tab
+perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. != 1) {print "\n"} s/ |$/\t/; $count++; $_ .= "\t";} else {s/ //g; $len += length($_)} print $_;} print "\n"; warn "\nConverted $count FASTA records in $. lines to tabular format\nTotal sequence length: $len\n\n";' ../data_raw/000012345.1protein.faa > ../output/45protein.tab
 ```
 
 
 Having the comparison of 95 to 45 into a CSV file.
 ```{r, eval=TRUE}
 # Read out the blast file into csv
-bltabl <- read.csv("../output/95-45_blastp.tab", sep = '\t', header = FALSE)
+bltabl <- read.csv("../output/45-95_blastp.tab", sep = '\t', header = FALSE)
 
 
 #Extract columns desired
@@ -113,7 +100,7 @@ colnames(bltabl2.0_df) <- c("Query", "Database", "Eval", "Score")
 
 Reading the file from 95 protein to CSV file.
 ```{r, eval=TRUE}
-spgo <- read.csv("../output/95protein.tab", sep = '\t', header = TRUE)
+spgo <- read.csv("../output/45protein.tab", sep = '\t', header = TRUE)
 colnames(spgo) <- c("Database", "Protein", "Coding_Sequence")
 ```
 
