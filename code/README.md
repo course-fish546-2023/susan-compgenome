@@ -12,6 +12,11 @@ Begin a working of the heatmap where one can start seeing the presensence and ab
 
 Overaching goal: see if automizing the multiple genomes is doable.
 
+URL for rpubs of SAR11 blast:
+
+https://rpubs.com/sggarcia6/1039843
+
+
 Week 8:
 
 Working on HEatmap and finish.
