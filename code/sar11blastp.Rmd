@@ -27,12 +27,12 @@ Comparing protein sequence 000012345.1protein.faa (for easier terms called 45) t
 ```
 
 
-Running BLAST. Comparing 45 to 95. 
+Running BLAST. Comparing 45 to NP1. 
 ```{r, engine='bash'}
 /home/shared/ncbi-blast-2.11.0+/bin/blastp \
--query ../data_raw/012276695protein.faa \
+-query ../data_raw/GCA_012276695.1_protein.faa \
 -db ../blastdb/45-protein \
--out ../output/45-95_blastp.tab \
+-out ../output/45-NP1_blastp.tab \
 -evalue 1E-20 \
 -num_threads 20 \
 -max_target_seqs 1 \

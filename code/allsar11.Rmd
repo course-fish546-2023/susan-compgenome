@@ -31,10 +31,10 @@ colnames(bltabl1_2.0_df) <- c("Query", "Database", "Eval", "Score")
 ```
 
 
-Having the comparison of 45 to GCA_000155895.1 into a CSV file.
+Having the comparison of 45 to GCA_012276695.1(also known as NP1) into a CSV file.
 ```{r, eval=TRUE}
 # Read out the blast file into csv
-bltabl2 <- read.csv("../susan-compgenome/output/bigblast-01/GCA_000155895.1_45_blastp.tab", sep = '\t', header = FALSE)
+bltabl2 <- read.csv("../output/45-NP1_blastp.tab", sep = '\t', header = FALSE)
 
 
 #Extract columns desired
@@ -65,11 +65,11 @@ kable(head(joined1_df, n = 10), caption = "Joined data frame with kable formatti
   
 ```
 
-45 to GCA_000155895.1
+45 to GCA_012276695.1
 ```{r, eval=TRUE}
 # Join the data frames
 joined2_df <- left_join(bltabl2_2.0_df, spgo, by = c("Database" = "Database")) %>%
-  mutate(Organism = "sar895")
+  mutate(Organism = "sarNP1")
 
 # Print the table with kable
 kable(head(joined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
