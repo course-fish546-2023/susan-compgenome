@@ -1,0 +1,170 @@
+---
+title: "sar11comparison"
+output: html_document
+date: "2023-05-09"
+---
+Loading libraries
+```{r setup, include = FALSE}
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+library(DT)
+library(reshape2)
+library(Biostrings)
+library(tm)
+```
+
+Having the comparison of 45 to 95 into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+bltabl1 <- read.csv("../susan-compgenome/output/45-95_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+ bltabl1_2.0 <- bltabl1[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+bltabl1_2.0_df <- data_frame(bltabl1_2.0)
+
+colnames(bltabl1_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+
+
+Having the comparison of 45 to GCA_000155895.1 into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+bltabl2 <- read.csv("../susan-compgenome/output/bigblast-01/GCA_000155895.1_45_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+ bltabl2_2.0 <- bltabl2[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+bltabl2_2.0_df <- data_frame(bltabl2_2.0)
+
+colnames(bltabl2_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+
+Reading the file from 45 protein to CSV file.
+```{r, eval=TRUE}
+spgo <- read.csv("../susan-compgenome/output/45protein.tab", sep = '\t', header = TRUE)
+colnames(spgo) <- c("Database", "Protein", "Coding_Sequence")
+```
+
+
+45 to 95
+```{r, eval=TRUE}
+# Join the data frames
+joined1_df <- left_join(bltabl1_2.0_df, spgo, by = c("Database" = "Database")) %>%
+  mutate(Organism = "sar95")
+
+# Print the table with kable
+kable(head(joined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+
+45 to GCA_000155895.1
+```{r, eval=TRUE}
+# Join the data frames
+joined2_df <- left_join(bltabl2_2.0_df, spgo, by = c("Database" = "Database")) %>%
+  mutate(Organism = "sar895")
+
+# Print the table with kable
+kable(head(joined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+```{r, eval=TRUE}
+# Join the data frames
+joined3_df <- bind_rows(joined1_df, joined2_df)
+
+# Print the table with kable
+kable(head(joined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+```{r, eval=TRUE}
+# Summarize the data
+summarized_df <- joined3_df %>%
+  group_by(Protein, Organism) %>%
+  summarize(mean_value = mean(Score))
+
+# Create a wide-format table
+wide_df <- summarized_df %>%
+  pivot_wider(names_from = Organism, values_from = mean_value)
+
+# Exclude non-numeric columns
+data_mat <- as.matrix(wide_df[, -1])
+
+# Define custom color palette
+my_palette <- colorRampPalette(c("white", "purple", "orange"))(n = 100)
+
+# Generate the heatmap with custom colors and row names
+heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
+        labRow = wide_df$Protein)
+
+
+
+```
+45 to 95
+```{r, eval=TRUE}
+# Read joined blast table with annotation table
+joined1_df <- left_join(bltabl1_2.0_df, spgo, by = "Database")
+#c("Database" = "Database"))
+
+# Select the column of interest
+column_name <- "Protein"  # Replace with the name of the column of interest
+column_data <- joined_df[[column_name]]
+
+# Count the occurrences of the strings in the column
+string_counts <- table(column_data)
+
+# Convert to a data frame, sort by count, and select the top 10
+string_counts_df <- as.data.frame(string_counts)
+colnames(string_counts_df) <- c("String", "Count")
+string_counts_df <- string_counts_df[order(string_counts_df$Count, decreasing = TRUE), ]
+top_10_strings <- head(string_counts_df, n = 10)
+
+# Plot the top 10 most common strings using ggplot2
+ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Top 10 Protein hits",
+       x = column_name,
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  coord_flip()
+
+```
+
+
+45 to GCA_000155895.1
+```{r, eval=TRUE}
+# Read joined blast table with annotation table
+joined2_df <- left_join(bltabl2_2.0_df, spgo, by = "Database")
+#c("Database" = "Database"))
+
+# Select the column of interest
+column_name <- "Protein"  # Replace with the name of the column of interest
+column_data <- joined2_df[[column_name]]
+
+# Count the occurrences of the strings in the column
+string_counts <- table(column_data)
+
+# Convert to a data frame, sort by count, and select the top 10
+string_counts_df <- as.data.frame(string_counts)
+colnames(string_counts_df) <- c("String", "Count")
+string_counts_df <- string_counts_df[order(string_counts_df$Count, decreasing = TRUE), ]
+top_10_strings <- head(string_counts_df, n = 10)
+
+# Plot the top 10 most common strings using ggplot2
+ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Top 10 Protein hits",
+       x = column_name,
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  coord_flip()
+
+```

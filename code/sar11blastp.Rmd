@@ -82,7 +82,7 @@ perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. 
 ```
 
 
-Having the comparison of 95 to 45 into a CSV file.
+Having the comparison of 45 to 95 into a CSV file.
 ```{r, eval=TRUE}
 # Read out the blast file into csv
 bltabl <- read.csv("../output/45-95_blastp.tab", sep = '\t', header = FALSE)
@@ -98,7 +98,7 @@ bltabl2.0_df <- data_frame(bltabl_2.0)
 colnames(bltabl2.0_df) <- c("Query", "Database", "Eval", "Score")
 ```
 
-Reading the file from 95 protein to CSV file.
+Reading the file from 45 protein to CSV file.
 ```{r, eval=TRUE}
 spgo <- read.csv("../output/45protein.tab", sep = '\t', header = TRUE)
 colnames(spgo) <- c("Database", "Protein", "Coding_Sequence")

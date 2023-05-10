@@ -8,5 +8,7 @@ assignments/data/*.tab
 susan-compgenome/data_raw
 assignments/output/*.tab
 data_raw
+bigblast-01
+
 
 

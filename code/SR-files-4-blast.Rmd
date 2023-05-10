@@ -62,8 +62,8 @@ find ../data_raw/ -type f -name "G*.faa" \
 | xargs basename -s _protein.faa | xargs -I{} \
 /home/shared/ncbi-blast-2.11.0+/bin/blastp \
 -query ../data_raw/{}/{}_protein.faa \
--db ../blastdb/95-protein \
--out ../output/bigblast-01/{}_95_blastp.tab \
+-db ../blastdb/45-protein \
+-out ../output/bigblast-01/{}_45_blastp.tab \
 -evalue 1E-20 \
 -num_threads 40 \
 -max_target_seqs 1 \
