@@ -17,7 +17,7 @@ library(tm)
 Having the comparison of 45 to 95 into a CSV file.
 ```{r, eval=TRUE}
 # Read out the blast file into csv
-bltabl1 <- read.csv("../susan-compgenome/output/45-95_blastp.tab", sep = '\t', header = FALSE)
+bltabl1 <- read.csv("../output/45-95_blastp.tab", sep = '\t', header = FALSE)
 
 
 #Extract columns desired
@@ -49,7 +49,7 @@ colnames(bltabl2_2.0_df) <- c("Query", "Database", "Eval", "Score")
 
 Reading the file from 45 protein to CSV file.
 ```{r, eval=TRUE}
-spgo <- read.csv("../susan-compgenome/output/45protein.tab", sep = '\t', header = TRUE)
+spgo <- read.csv("../output/45protein.tab", sep = '\t', header = TRUE)
 colnames(spgo) <- c("Database", "Protein", "Coding_Sequence")
 ```
 
@@ -114,7 +114,7 @@ joined1_df <- left_join(bltabl1_2.0_df, spgo, by = "Database")
 
 # Select the column of interest
 column_name <- "Protein"  # Replace with the name of the column of interest
-column_data <- joined_df[[column_name]]
+column_data <- joined1_df[[column_name]]
 
 # Count the occurrences of the strings in the column
 string_counts <- table(column_data)
