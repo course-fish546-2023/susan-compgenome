@@ -1,0 +1,51 @@
+---
+title: "eury_blast"
+output: html_document
+date: "2023-05-17"
+---
+Loading Libriries
+```{r setup, include = FALSE}
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+library(DT)
+library(reshape2)
+library(Biostrings)
+library(tm)
+```
+
+
+Making a Database for DS2 or H.volcanii (Reference Genome)
+```{r, engine='bash'}
+/home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
+-in ../eury_data_raw/GCA000025685.1protein.faa \
+-dbtype prot \
+-out ../eury_data_raw/ds2-protein
+```
+Finding the files within the folder
+```{bash}
+find ../eury_data_raw/ -type f -name "*.faa" -print0 | xargs -0 -I {} bash -c 'input_file="{}"; output_file="$(dirname "$input_file")/$(basename "$(dirname "$input_file")")_$(basename "$input_file")"; cp "$input_file" "$output_file"'
+
+```
+How many files?
+```{r, engine='bash'}
+find ../eury_data_raw/ -type f -name "G*.faa" | wc -l
+```
+
+
+```{r, engine='bash'}
+#given 1k+ output files creating subdirectory
+mkdir ../output/eury_bigblast-02
+
+find ../data_raw/ -type f -name "G*.faa" \
+| xargs basename -s _protein.faa | xargs -I{} \
+/home/shared/ncbi-blast-2.11.0+/bin/blastp \
+-query ../data_raw/{}/{}_protein.faa \
+-db ../blastdb/45-protein \
+-out ../output/bigblast-01/{}_45_blastp.tab \
+-evalue 1E-20 \
+-num_threads 40 \
+-max_target_seqs 1 \
+-outfmt 6
+```
+
