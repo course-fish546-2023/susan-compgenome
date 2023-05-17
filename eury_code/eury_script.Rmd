@@ -1,9 +1,41 @@
 ---
-title: "eury_blast"
-output: html_document
+title: "Exploring Euryarchaeota BLAST"
 date: "2023-05-17"
+output:
+  html_document:
+    theme: cerulean
+    highlight: pygments
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    code_folding: show
 ---
-Loading Libriries
+# Euryarchaeota in the Ocean
+
+I was interested in seeing how similar would Marine Group lll Euryarchaeota would be to their neighbors in Euryarchaeota, specifically to Haloarchaea. I chose two reference genomes for to use for the BLAST. The first was DS2 or also known as Haloferax Volcanii and the second was Haloferax Marinum. I chose H. volcanii because it is a model for haloarchaea and I chose H marinum because it was low salt-tolerant haloarchaea isolated from seawater and sediment. Below I am attaching the protein names i used with names/origin of the organism.
+
+## Respective Protein Names 
+1. GCA_028346035.1: Marine Group III euryarchaeote 
+Archaea; Candidatus Thermoplasmatota; Thermoplasmata; Candidatus Thermoprofundales.
+2. GCA_028345155.1: Marine Group III euryarchaeote 
+Archaea; Candidatus Thermoplasmatota; Thermoplasmata; Candidatus Thermoprofundales.
+3. GCA_028343655.1: Marine Group III euryarchaeote 
+Archaea; Candidatus Thermoplasmatota; Thermoplasmata; Candidatus Thermoprofundales.
+4. GCA_012964945.1: Marine Group III euryarchaeote 
+Archaea; Candidatus Thermoplasmatota; Thermoplasmata; Candidatus Thermoprofundales.
+5. GCA_012963685.1: Marine Group III euryarchaeote 
+Archaea; Candidatus Thermoplasmatota; Thermoplasmata; Candidatus Thermoprofundales.
+6. GCA_012959635.1: Marine Group III euryarchaeote 
+Archaea; Candidatus Thermoplasmatota; Thermoplasmata; Candidatus Thermoprofundales.
+7. GCA_009674625.1: Haloferax Marinum
+8. GCA_000025685.1: Haloferax Volcanii
+
+
+
+# Loading Libraries
+
+Remember to load your libraries
+
 ```{r setup, include = FALSE}
 library(knitr)
 library(tidyverse)
@@ -14,38 +46,641 @@ library(Biostrings)
 library(tm)
 ```
 
-
-Making a Database for DS2 or H.volcanii (Reference Genome)
-```{r, engine='bash'}
+# Making a Database for DS2 or H.volcanii (Reference Genome)
+```{r, engine='bash', eval = TRUE}
 /home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
--in ../eury_data_raw/GCA000025685.1protein.faa \
+-in ../eury_data_raw/ds2_protein.faa \
 -dbtype prot \
--out ../eury_data_raw/ds2-protein
+-out ../eury_blastdb/ds2-protein
 ```
-Finding the files within the folder
-```{bash}
+# Making a Database for  H.marinum (Reference Genome)
+```{r, engine='bash', eval = TRUE}
+/home/shared/ncbi-blast-2.11.0+/bin/makeblastdb \
+-in ../eury_data_raw/GCA_009674625.1_protein.faa \
+-dbtype prot \
+-out ../eury_blastdb/hmar-protein
+```
+
+# Exploring Files
+## Finding the files within the folder
+```{bash, eval = TRUE}
 find ../eury_data_raw/ -type f -name "*.faa" -print0 | xargs -0 -I {} bash -c 'input_file="{}"; output_file="$(dirname "$input_file")/$(basename "$(dirname "$input_file")")_$(basename "$input_file")"; cp "$input_file" "$output_file"'
 
 ```
-How many files?
-```{r, engine='bash'}
+## How many files?
+```{r, engine='bash', , eval = TRUE}
 find ../eury_data_raw/ -type f -name "G*.faa" | wc -l
 ```
+# BIG BLAST 
+## Blasting all the files for DS2
+```{r, engine='bash', eval = FALSE}
 
-
-```{r, engine='bash'}
-#given 1k+ output files creating subdirectory
 mkdir ../output/eury_bigblast-02
 
-find ../data_raw/ -type f -name "G*.faa" \
+find ../eury_data_raw/ -type f -name "G*.faa" \
 | xargs basename -s _protein.faa | xargs -I{} \
 /home/shared/ncbi-blast-2.11.0+/bin/blastp \
--query ../data_raw/{}/{}_protein.faa \
--db ../blastdb/45-protein \
--out ../output/bigblast-01/{}_45_blastp.tab \
+-query ../eury_data_raw/{}/{}_protein.faa \
+-db ../eury_blastdb/ds2-protein \
+-out ../output/eury_bigblast-02/{}_ds2_blastp.tab \
+-evalue 1E-20 \
+-num_threads 40 \
+-max_target_seqs 1 \
+-outfmt 6
+```
+## Blasting all the files for H marinum
+```{r, engine='bash', eval = FALSE}
+
+#mkdir ../output/eury_bigblast-02
+
+find ../eury_data_raw/ -type f -name "G*.faa" \
+| xargs basename -s _protein.faa | xargs -I{} \
+/home/shared/ncbi-blast-2.11.0+/bin/blastp \
+-query ../eury_data_raw/{}/{}_protein.faa \
+-db ../eury_blastdb/hmar-protein \
+-out ../output/eury_bigblast-02/{}_hmar_blastp.tab \
 -evalue 1E-20 \
 -num_threads 40 \
 -max_target_seqs 1 \
 -outfmt 6
 ```
 
+# Comparisons 
+## Blasted to DS2
+Comparison of DS2 to GCA_028346035.1 into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl1 <- read.csv("../output/eury_bigblast-02/GCA_028346035.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+eurybltabl1_2.0 <- eurybltabl1[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl1_2.0_df <- data_frame(eurybltabl1_2.0)
+
+colnames(eurybltabl1_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of DS2 to GCA_028345155.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl2 <- read.csv("../output/eury_bigblast-02/GCA_028345155.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+eurybltabl2_2.0 <- eurybltabl2[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl2_2.0_df <- data_frame(eurybltabl2_2.0)
+
+colnames(eurybltabl2_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of DS2 to GCA_028343655.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl3 <- read.csv("../output/eury_bigblast-02/GCA_028343655.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+eurybltabl3_2.0 <- eurybltabl3[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl3_2.0_df <- data_frame(eurybltabl3_2.0)
+
+colnames(eurybltabl3_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of DS2 to GCA_012964945.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl4 <- read.csv("../output/eury_bigblast-02/GCA_012964945.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+eurybltabl4_2.0 <- eurybltabl4[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl4_2.0_df <- data_frame(eurybltabl4_2.0)
+
+colnames(eurybltabl4_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of DS2 to GCA_012963685.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl5 <- read.csv("../output/eury_bigblast-02/GCA_012963685.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+eurybltabl5_2.0 <- eurybltabl5[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl5_2.0_df <- data_frame(eurybltabl5_2.0)
+
+colnames(eurybltabl5_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of DS2 to GCA_012960615.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl6 <- read.csv("../output/eury_bigblast-02/GCA_012960615.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+eurybltabl6_2.0 <- eurybltabl6[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl6_2.0_df <- data_frame(eurybltabl6_2.0)
+
+colnames(eurybltabl6_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of DS2 to GCA_012959635.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl7 <- read.csv("../output/eury_bigblast-02/GCA_012959635.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+eurybltabl7_2.0 <- eurybltabl7[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl7_2.0_df <- data_frame(eurybltabl7_2.0)
+
+colnames(eurybltabl7_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of DS2 to GCA_009674625.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl8 <- read.csv("../output/eury_bigblast-02/GCA_009674625.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+eurybltabl8_2.0 <- eurybltabl8[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl8_2.0_df <- data_frame(eurybltabl8_2.0)
+
+colnames(eurybltabl8_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of DS2 to GCA_000025685.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+eurybltabl9 <- read.csv("../output/eury_bigblast-02/GCA_000025685.1_ds2_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+eurybltabl9_2.0 <- eurybltabl9[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+eurybltabl9_2.0_df <- data_frame(eurybltabl9_2.0)
+
+colnames(eurybltabl9_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+
+
+## Blasted to H marinum
+Comparison of H marinum to GCA_028346035.1 into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl1 <- read.csv("../output/eury_bigblast-02/GCA_028346035.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+hmarbltabl1_2.0 <- hmarbltabl1[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl1_2.0_df <- data_frame(hmarbltabl1_2.0)
+
+colnames(hmarbltabl1_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of H marinum to GCA_028345155.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl2 <- read.csv("../output/eury_bigblast-02/GCA_028345155.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+hmarbltabl2_2.0 <- hmarbltabl2[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl2_2.0_df <- data_frame(hmarbltabl2_2.0)
+
+colnames(hmarbltabl2_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of H marinum to GCA_028343655.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl3 <- read.csv("../output/eury_bigblast-02/GCA_028343655.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+
+#Extract columns desired
+hmarbltabl3_2.0 <- hmarbltabl3[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl3_2.0_df <- data_frame(hmarbltabl3_2.0)
+
+colnames(hmarbltabl3_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of H marinum to GCA_012964945.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl4 <- read.csv("../output/eury_bigblast-02/GCA_012964945.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+hmarbltabl4_2.0 <- hmarbltabl4[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl4_2.0_df <- data_frame(hmarbltabl4_2.0)
+
+colnames(hmarbltabl4_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of H marinum to GCA_012963685.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl5 <- read.csv("../output/eury_bigblast-02/GCA_012963685.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+hmarbltabl5_2.0 <- hmarbltabl5[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl5_2.0_df <- data_frame(hmarbltabl5_2.0)
+
+colnames(hmarbltabl5_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of H marinum to GCA_012960615.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl6 <- read.csv("../output/eury_bigblast-02/GCA_012960615.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+hmarbltabl6_2.0 <- hmarbltabl6[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl6_2.0_df <- data_frame(hmarbltabl6_2.0)
+
+colnames(hmarbltabl6_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of H marinum to GCA_012959635.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl7 <- read.csv("../output/eury_bigblast-02/GCA_012959635.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+hmarbltabl7_2.0 <- hmarbltabl7[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl7_2.0_df <- data_frame(hmarbltabl7_2.0)
+
+colnames(hmarbltabl7_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of H marinum to GCA_009674625.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl8 <- read.csv("../output/eury_bigblast-02/GCA_009674625.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+hmarbltabl8_2.0 <- hmarbltabl8[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl8_2.0_df <- data_frame(hmarbltabl8_2.0)
+
+colnames(hmarbltabl8_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+Comparison of H marinum to GCA_000025685.1  into a CSV file.
+```{r, eval=TRUE}
+# Read out the blast file into csv
+hmarbltabl9 <- read.csv("../output/eury_bigblast-02/GCA_000025685.1_hmar_blastp.tab", sep = '\t', header = FALSE)
+
+#Extract columns desired
+hmarbltabl9_2.0 <- hmarbltabl9[, c("V1", "V2", "V11", "V12")]
+
+#Make into dataframe
+
+hmarbltabl9_2.0_df <- data_frame(hmarbltabl9_2.0)
+
+colnames(hmarbltabl9_2.0_df) <- c("Query", "Database", "Eval", "Score")
+```
+
+
+
+# Setting up the Reference Genome Information needed
+
+## DS2
+DS2 fasta to tab-delimited
+```{r, engine='bash'}
+perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. != 1) {print "\n"} s/ |$/\t/; $count++; $_ .= "\t";} else {s/ //g; $len += length($_)} print $_;} print "\n"; warn "\nConverted $count FASTA records in $. lines to tabular format\nTotal sequence length: $len\n\n";' ../eury_data_raw/ds2_protein.faa > ../output/ds2protein.tab
+```
+
+Reading the file for ds2 protein to CSV file
+```{r, eval=TRUE}
+ds2csv <- read.csv("../output/ds2protein.tab", sep = '\t', header = TRUE)
+colnames(ds2csv) <- c("Database", "Protein", "Coding_Sequence")
+```
+
+## H marinum
+H. marinum fasta to tab-delimited
+```{r, engine='bash'}
+perl -e '$count=0; $len=0; while(<>) {s/\r?\n//; s/\t/ /g; if (s/^>//) { if ($. != 1) {print "\n"} s/ |$/\t/; $count++; $_ .= "\t";} else {s/ //g; $len += length($_)} print $_;} print "\n"; warn "\nConverted $count FASTA records in $. lines to tabular format\nTotal sequence length: $len\n\n";' ../eury_data_raw/GCA_009674625.1_protein.faa > ../output/hmarprotein.tab
+```
+
+Reading the file for H. marinum protein to CSV file
+```{r, eval=TRUE}
+hmarcsv <- read.csv("../output/hmarprotein.tab", sep = '\t', header = TRUE)
+colnames(hmarcsv) <- c("Database", "Protein", "Coding_Sequence")
+```
+
+# Tables for each comparison to DS2
+
+DS2 to GCA_028346035.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined1_df <- left_join(eurybltabl1_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "035")
+
+# Print the table with kable
+kable(head(euryjoined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+DS2 to GCA_028345155.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined2_df <- left_join(eurybltabl2_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "155")
+
+# Print the table with kable
+kable(head(euryjoined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+DS2 to GCA_028343655.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined3_df <- left_join(eurybltabl3_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "655")
+
+# Print the table with kable
+kable(head(euryjoined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+DS2 to GCA_012964945.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined4_df <- left_join(eurybltabl4_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "945")
+
+# Print the table with kable
+kable(head(euryjoined4_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+DS2 to GCA_012963685.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined5_df <- left_join(eurybltabl5_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "685")
+
+# Print the table with kable
+kable(head(euryjoined5_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+DS2 to GCA_012960615.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined6_df <- left_join(eurybltabl6_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "615")
+
+# Print the table with kable
+kable(head(euryjoined6_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+DS2 to GCA_012959635.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined7_df <- left_join(eurybltabl7_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "635")
+
+# Print the table with kable
+kable(head(euryjoined7_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+DS2 to GCA_009674625.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined8_df <- left_join(eurybltabl8_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "625")
+
+# Print the table with kable
+kable(head(euryjoined8_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+DS2 to GCA_000025685.1
+```{r, eval=TRUE}
+# Join the data frames
+euryjoined9_df <- left_join(eurybltabl9_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "685")
+
+# Print the table with kable
+kable(head(euryjoined9_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+
+# Tables for each comparison to H marinum
+
+H marinum to GCA_028346035.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined1_df <- left_join(hmarbltabl1_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "035")
+
+# Print the table with kable
+kable(head(hmarjoined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+H marinum to GCA_028345155.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined2_df <- left_join(hmarbltabl2_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "155")
+
+# Print the table with kable
+kable(head(hmarjoined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+H marinum to GCA_028343655.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined3_df <- left_join(hmarbltabl3_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "655")
+
+# Print the table with kable
+kable(head(hmarjoined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+H marinum to GCA_012964945.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined4_df <- left_join(hmarbltabl4_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "945")
+
+# Print the table with kable
+kable(head(hmarjoined4_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+H marinum to GCA_012963685.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined5_df <- left_join(hmarbltabl5_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "685")
+
+# Print the table with kable
+kable(head(hmarjoined5_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+H marinum to GCA_012960615.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined6_df <- left_join(hmarbltabl6_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "615")
+
+# Print the table with kable
+kable(head(hmarjoined6_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+H marinum to GCA_012959635.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined7_df <- left_join(hmarbltabl7_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "635")
+
+# Print the table with kable
+kable(head(hmarjoined7_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+H marinum to GCA_009674625.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined8_df <- left_join(hmarbltabl8_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "625")
+
+# Print the table with kable
+kable(head(hmarjoined8_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+H marinum to GCA_000025685.1
+```{r, eval=TRUE}
+# Join the data frames
+hmarjoined9_df <- left_join(hmarbltabl9_2.0_df, hmarcsv, by = c("Database" = "Database")) %>%
+  mutate(Organism = "685")
+
+# Print the table with kable
+kable(head(hmarjoined9_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+  
+```
+
+# Joining all Datatables for DS2
+```{r, eval=TRUE}
+# Join the data frames
+ds2joinedtotal_df <- bind_rows(euryjoined1_df, euryjoined2_df, euryjoined3_df, euryjoined4_df, euryjoined5_df, euryjoined6_df, euryjoined7_df, euryjoined8_df, euryjoined9_df)
+
+# Print the table with kable
+kable(head(ds2joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)")
+```
+
+# Joining all Datatables for H marinum 
+```{r, eval=TRUE}
+# Join the data frames
+hmar_joinedtotal_df <- bind_rows(hmarjoined1_df, hmarjoined2_df, hmarjoined3_df, hmarjoined4_df, hmarjoined5_df, hmarjoined6_df, hmarjoined7_df, hmarjoined8_df, hmarjoined9_df)
+
+# Print the table with kable
+kable(head(hmar_joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+```
+
+# Visualization
+
+## HeatMap comparing 9 for DS2
+
+```{r, eval=TRUE}
+# Summarize the data
+ds2summarized_df <- ds2joinedtotal_df %>%
+  group_by(Protein, Organism) %>%
+  summarize(mean_value = mean(Score))
+
+# Create a wide-format table
+ds2wide_df <- ds2summarized_df %>%
+  pivot_wider(names_from = Organism, values_from = mean_value)
+
+# Exclude non-numeric columns
+ds2data_mat <- as.matrix(ds2wide_df[, -1])
+
+# Define custom color palette
+ds2my_palette <- colorRampPalette(c("purple", "blue", "magenta"))(n = 100)
+
+# Generate the heatmap with custom colors and row names
+heatmap(ds2data_mat, Rowv = NA, Colv = NA, col = ds2my_palette, scale = "column",
+        labRow = ds2wide_df$Protein)
+```
+
+
+
+
+
+## HeatMap comparing 9 for H mar
+
+```{r, eval=TRUE}
+# Summarize the data
+hmar_summarized_df <- hmar_joinedtotal_df %>%
+  group_by(Protein, Organism) %>%
+  summarize(mean_value = mean(Score))
+
+# Create a wide-format table
+wide_df <- hmar_summarized_df %>%
+  pivot_wider(names_from = Organism, values_from = mean_value)
+
+# Exclude non-numeric columns
+data_mat <- as.matrix(wide_df[, -1])
+
+# Define custom color palette
+my_palette <- colorRampPalette(c("orange", "purple", "pink"))(n = 100)
+
+# Generate the heatmap with custom colors and row names
+heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
+        labRow = wide_df$Protein)
+```
+
+## Joined Dataset 1 Protein Hits Figure 
+Joined Dataset 1 top Protein Hits
+```{r, eval=TRUE}
+# Read joined blast table with annotation table
+joined1_df <- left_join(eurybltabl1_2.0_df, ds2csv, by = "Database")
+#c("Database" = "Database"))
+
+# Select the column of interest
+column_name <- "Protein"  # Replace with the name of the column of interest
+column_data <- joined1_df[[column_name]]
+
+# Count the occurrences of the strings in the column
+string_counts <- table(column_data)
+
+# Convert to a data frame, sort by count, and select the top 10
+string_counts_df <- as.data.frame(string_counts)
+colnames(string_counts_df) <- c("String", "Count")
+string_counts_df <- string_counts_df[order(string_counts_df$Count, decreasing = TRUE), ]
+top_10_strings <- head(string_counts_df, n = 10)
+
+# Plot the top 10 most common strings using ggplot2
+ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Top 10 Protein hits",
+       x = column_name,
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none") +
+  coord_flip()
+
+```
