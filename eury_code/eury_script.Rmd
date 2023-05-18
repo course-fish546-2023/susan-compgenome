@@ -63,9 +63,8 @@ library(tm)
 
 # Exploring Files
 ## Finding the files within the folder
-```{bash, eval = TRUE}
+```{bash, eval = FALSE}
 find ../eury_data_raw/ -type f -name "*.faa" -print0 | xargs -0 -I {} bash -c 'input_file="{}"; output_file="$(dirname "$input_file")/$(basename "$(dirname "$input_file")")_$(basename "$input_file")"; cp "$input_file" "$output_file"'
-
 ```
 ## How many files?
 ```{r, engine='bash', , eval = TRUE}
@@ -405,9 +404,11 @@ DS2 to GCA_028346035.1
 euryjoined1_df <- left_join(eurybltabl1_2.0_df, ds2csv, by = c("Database" = "Database")) %>%
   mutate(Organism = "035")
 
-# Print the table with kable
-kable(head(euryjoined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#You may print the table with kable
+#kable(head(euryjoined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(euryjoined1_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE)) 
 ```
 DS2 to GCA_028345155.1
 ```{r, eval=TRUE}
@@ -416,8 +417,10 @@ euryjoined2_df <- left_join(eurybltabl2_2.0_df, ds2csv, by = c("Database" = "Dat
   mutate(Organism = "155")
 
 # Print the table with kable
-kable(head(euryjoined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(euryjoined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(euryjoined2_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))   
 ```
 DS2 to GCA_028343655.1
 ```{r, eval=TRUE}
@@ -426,8 +429,10 @@ euryjoined3_df <- left_join(eurybltabl3_2.0_df, ds2csv, by = c("Database" = "Dat
   mutate(Organism = "655")
 
 # Print the table with kable
-kable(head(euryjoined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(euryjoined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(euryjoined3_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE)) 
 ```
 DS2 to GCA_012964945.1
 ```{r, eval=TRUE}
@@ -436,8 +441,10 @@ euryjoined4_df <- left_join(eurybltabl4_2.0_df, ds2csv, by = c("Database" = "Dat
   mutate(Organism = "945")
 
 # Print the table with kable
-kable(head(euryjoined4_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(euryjoined4_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(euryjoined4_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE)) 
 ```
 DS2 to GCA_012963685.1
 ```{r, eval=TRUE}
@@ -446,8 +453,10 @@ euryjoined5_df <- left_join(eurybltabl5_2.0_df, ds2csv, by = c("Database" = "Dat
   mutate(Organism = "685")
 
 # Print the table with kable
-kable(head(euryjoined5_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+# kable(head(euryjoined5_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(euryjoined5_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))  
 ```
 DS2 to GCA_012960615.1
 ```{r, eval=TRUE}
@@ -456,8 +465,10 @@ euryjoined6_df <- left_join(eurybltabl6_2.0_df, ds2csv, by = c("Database" = "Dat
   mutate(Organism = "615")
 
 # Print the table with kable
-kable(head(euryjoined6_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(euryjoined6_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+ 
+#Scrollable tables
+datatable(head(euryjoined6_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))  
 ```
 DS2 to GCA_012959635.1
 ```{r, eval=TRUE}
@@ -466,8 +477,10 @@ euryjoined7_df <- left_join(eurybltabl7_2.0_df, ds2csv, by = c("Database" = "Dat
   mutate(Organism = "635")
 
 # Print the table with kable
-kable(head(euryjoined7_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(euryjoined7_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(euryjoined7_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))   
 ```
 DS2 to GCA_009674625.1
 ```{r, eval=TRUE}
@@ -476,8 +489,10 @@ euryjoined8_df <- left_join(eurybltabl8_2.0_df, ds2csv, by = c("Database" = "Dat
   mutate(Organism = "625")
 
 # Print the table with kable
-kable(head(euryjoined8_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+# kable(head(euryjoined8_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+ 
+#Scrollable tables
+datatable(head(euryjoined8_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))  
 ```
 DS2 to GCA_000025685.1
 ```{r, eval=TRUE}
@@ -486,8 +501,10 @@ euryjoined9_df <- left_join(eurybltabl9_2.0_df, ds2csv, by = c("Database" = "Dat
   mutate(Organism = "685")
 
 # Print the table with kable
-kable(head(euryjoined9_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(euryjoined9_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(euryjoined9_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))   
 ```
 
 # Tables for each comparison to H marinum
@@ -499,8 +516,10 @@ hmarjoined1_df <- left_join(hmarbltabl1_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "035")
 
 # Print the table with kable
-kable(head(hmarjoined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+ 
+#Scrollable tables
+datatable(head(hmarjoined1_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))  
 ```
 H marinum to GCA_028345155.1
 ```{r, eval=TRUE}
@@ -509,8 +528,10 @@ hmarjoined2_df <- left_join(hmarbltabl2_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "155")
 
 # Print the table with kable
-kable(head(hmarjoined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(hmarjoined2_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))    
 ```
 H marinum to GCA_028343655.1
 ```{r, eval=TRUE}
@@ -519,8 +540,10 @@ hmarjoined3_df <- left_join(hmarbltabl3_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "655")
 
 # Print the table with kable
-kable(head(hmarjoined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(hmarjoined3_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))    
 ```
 H marinum to GCA_012964945.1
 ```{r, eval=TRUE}
@@ -529,8 +552,10 @@ hmarjoined4_df <- left_join(hmarbltabl4_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "945")
 
 # Print the table with kable
-kable(head(hmarjoined4_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined4_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(hmarjoined4_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))    
 ```
 H marinum to GCA_012963685.1
 ```{r, eval=TRUE}
@@ -539,8 +564,10 @@ hmarjoined5_df <- left_join(hmarbltabl5_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "685")
 
 # Print the table with kable
-kable(head(hmarjoined5_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined5_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(hmarjoined5_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))    
 ```
 H marinum to GCA_012960615.1
 ```{r, eval=TRUE}
@@ -549,8 +576,10 @@ hmarjoined6_df <- left_join(hmarbltabl6_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "615")
 
 # Print the table with kable
-kable(head(hmarjoined6_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined6_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+ 
+#Scrollable tables
+datatable(head(hmarjoined6_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))   
 ```
 H marinum to GCA_012959635.1
 ```{r, eval=TRUE}
@@ -559,8 +588,10 @@ hmarjoined7_df <- left_join(hmarbltabl7_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "635")
 
 # Print the table with kable
-kable(head(hmarjoined7_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined7_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(hmarjoined7_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))    
 ```
 H marinum to GCA_009674625.1
 ```{r, eval=TRUE}
@@ -569,8 +600,10 @@ hmarjoined8_df <- left_join(hmarbltabl8_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "625")
 
 # Print the table with kable
-kable(head(hmarjoined8_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined8_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+ 
+#Scrollable tables
+datatable(head(hmarjoined8_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))   
 ```
 H marinum to GCA_000025685.1
 ```{r, eval=TRUE}
@@ -579,8 +612,10 @@ hmarjoined9_df <- left_join(hmarbltabl9_2.0_df, hmarcsv, by = c("Database" = "Da
   mutate(Organism = "685")
 
 # Print the table with kable
-kable(head(hmarjoined9_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#kable(head(hmarjoined9_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(hmarjoined9_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))    
 ```
 
 # Joining all Datatables for DS2
@@ -589,7 +624,10 @@ kable(head(hmarjoined9_df, n = 10), caption = "Joined data frame with kable form
 ds2joinedtotal_df <- bind_rows(euryjoined1_df, euryjoined2_df, euryjoined3_df, euryjoined4_df, euryjoined5_df, euryjoined6_df, euryjoined7_df, euryjoined8_df, euryjoined9_df)
 
 # Print the table with kable
-kable(head(ds2joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)")
+#kable(head(ds2joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)")
+
+#Scrollable tables
+datatable(head(ds2joinedtotal_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))  
 ```
 
 # Joining all Datatables for H marinum 
@@ -598,7 +636,9 @@ kable(head(ds2joinedtotal_df, n = 10), caption = "Joined data frame with kable f
 hmar_joinedtotal_df <- bind_rows(hmarjoined1_df, hmarjoined2_df, hmarjoined3_df, hmarjoined4_df, hmarjoined5_df, hmarjoined6_df, hmarjoined7_df, hmarjoined8_df, hmarjoined9_df)
 
 # Print the table with kable
-kable(head(hmar_joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+#kable(head(hmar_joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+#Scrollable tables
+datatable(head(hmar_joinedtotal_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))
 ```
 
 # Visualization

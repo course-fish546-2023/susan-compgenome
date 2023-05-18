@@ -3,16 +3,22 @@ title: "SAR11 Protein Comparison"
 date: "2023-05-09"
 output:
   html_document:
-    theme: cerulean
+    theme: cosmo
     highlight: pygments
     toc: true
     toc_float: true
     toc_depth: 2
     code_folding: show
 ---
+# Project Information
+Talk about it, why? 
 
 
-Loading libraries
+# Additional Information:
+RPubs Link for Euryarchaeota: https://rpubs.com/sggarcia6/1042560
+
+
+# Load your libraries
 ```{r setup, include = FALSE}
 library(knitr)
 library(tidyverse)

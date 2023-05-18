@@ -1,0 +1,11 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/1042560/81aec8684fa34559997d94fa0908d378
+bundleId: https://api.rpubs.com/api/v1/document/1042560/81aec8684fa34559997d94fa0908d378
+url: http://rpubs.com/sggarcia6/1042560
+when: 1684432007.17557
+lastSyncTime: 1684432007.17559
