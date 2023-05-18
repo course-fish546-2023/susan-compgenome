@@ -10,5 +10,8 @@ assignments/output/*.tab
 data_raw
 bigblast-01
 eury_data_raw
+susan-compgenome/code/*.html
+code/*.html
+
 
 

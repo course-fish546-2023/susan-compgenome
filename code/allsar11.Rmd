@@ -220,7 +220,46 @@ datatable(head(joinedtotal_df), options = list(scrollX = TRUE, scrollY = "400px"
 ```
 
 # Two different Heatmaps
+```{r, eval=TRUE}
 
+# Summarize the data
+summarized_df <- joinedtotal_df %>%
+  group_by(Protein, Organism) %>%
+  summarize(mean_value = mean(Score))
+
+# Create a wide-format table
+wide_df <- summarized_df %>%
+  pivot_wider(names_from = Organism, values_from = mean_value)
+
+# Exclude non-numeric columns
+data_mat <- as.matrix(wide_df[, -1])
+
+# Define custom color palette
+my_palette <- colorRampPalette(c("orange", "purple", "white"))(n = 100)
+
+# Generate the heatmap with custom colors and row names
+heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
+        labRow = wide_df$Protein, main = "Heatmap Comparing 6", xlab = "Organism")
+
+# Add color legend
+color.legend <- function(color.palette, values, title = NULL, position = "topright") {
+  n <- length(color.palette)
+  x <- 0:(n - 1) / (n - 1)
+  y <- 0.5
+  rect(x, y, x + 1 / (n - 1), y + 1, col = color.palette, border = NA)
+  text((2 * x + 1) / 2, y + 1.5, labels = values, adj = c(0.5, 0), cex = 0.8)
+  if (!is.null(title)) {
+    mtext(title, side = 1, line = 1, cex = 0.8)
+  }
+}
+color.legend(color.palette = my_palette, values = c("Low", "Medium", "High"), title = "Legend")
+
+# Adjust plot margins
+par(mar = c(6, 6, 3, 4))
+
+
+
+```
 HeatMap comparing 6
 ```{r, eval=TRUE}
 # Summarize the data
@@ -272,7 +311,6 @@ heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
         labRow = filtered_df$Protein)
 
 ```
-
 
 # Top ten protein hits for all joined datasets
 
