@@ -3,11 +3,11 @@ title: "SAR11 Protein Comparison"
 date: "2023-05-09"
 output:
   html_document:
-    theme: cosmo
-    highlight: textmate
+    theme: cerulean
+    highlight: pygments
     toc: true
     toc_float: true
-    toc_depth: 3
+    toc_depth: 2
     code_folding: show
 ---
 
@@ -134,9 +134,11 @@ colnames(spgo) <- c("Database", "Protein", "Coding_Sequence")
 joined1_df <- left_join(bltabl1_2.0_df, spgo, by = c("Database" = "Database")) %>%
   mutate(Organism = "sar95")
 
-# Print the table with kable
-kable(head(joined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+# You may print the table with kable
+#kable(head(joined1_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(joined1_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))  
 ```
 45 to GCA_012276695.1
 ```{r, eval=TRUE}
@@ -144,9 +146,11 @@ kable(head(joined1_df, n = 10), caption = "Joined data frame with kable formatti
 joined2_df <- left_join(bltabl2_2.0_df, spgo, by = c("Database" = "Database")) %>%
   mutate(Organism = "NP1")
 
-# Print the table with kable
-kable(head(joined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+# You may print the table with kable
+#kable(head(joined2_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(joined2_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE)) 
 ```
 45 to GCA_000155895.1
 ```{r, eval=TRUE}
@@ -154,9 +158,11 @@ kable(head(joined2_df, n = 10), caption = "Joined data frame with kable formatti
 joined3_df <- left_join(bltabl3_2.0_df, spgo, by = c("Database" = "Database")) %>%
   mutate(Organism = "HTCC711")
 
-# Print the table with kable
-kable(head(joined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+# You may print the table with kable
+#kable(head(joined3_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(joined3_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))  
 ```
 45 to GCA_002101295.1
 ```{r, eval=TRUE}
@@ -164,9 +170,11 @@ kable(head(joined3_df, n = 10), caption = "Joined data frame with kable formatti
 joined4_df <- left_join(bltabl4_2.0_df, spgo, by = c("Database" = "Database")) %>%
   mutate(Organism = "RS40")
 
-# Print the table with kable
-kable(head(joined4_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+#You may print the table with kable
+#kable(head(joined4_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(joined4_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))   
 ```
 45 to GCA_028230015.1
 ```{r, eval=TRUE}
@@ -174,8 +182,11 @@ kable(head(joined4_df, n = 10), caption = "Joined data frame with kable formatti
 joined5_df <- left_join(bltabl5_2.0_df, spgo, by = c("Database" = "Database")) %>%
   mutate(Organism = "AM-375-I16")
 
-# Print the table with kable
-kable(head(joined5_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+# You may print the table with kable
+#kable(head(joined5_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(joined5_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE)) 
   
 ```
 45 to GCA_028229715.1
@@ -184,17 +195,22 @@ kable(head(joined5_df, n = 10), caption = "Joined data frame with kable formatti
 joined6_df <- left_join(bltabl6_2.0_df, spgo, by = c("Database" = "Database")) %>%
   mutate(Organism = "AM-375-K20")
 
-# Print the table with kable
-kable(head(joined6_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
-  
+# You may print the table with kable
+#kable(head(joined6_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(joined6_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE)) 
 ```
 # Joining all Datatables 
 ```{r, eval=TRUE}
 # Join the data frames
 joinedtotal_df <- bind_rows(joined1_df, joined2_df, joined3_df, joined4_df, joined5_df, joined6_df)
 
-# Print the table with kable
-kable(head(joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+#You may print the table with kable
+#kable(head(joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
+
+#Scrollable tables
+datatable(head(joinedtotal_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE)) 
 ```
 
 # Two different Heatmaps
