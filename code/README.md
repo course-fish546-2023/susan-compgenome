@@ -30,3 +30,9 @@ Create slides for the resutls to be shown.
 
 Week 10:
 final touches to present. 
+
+This could be my final figure for my project? I hope.
+![](../code/images/hope.png)
+
+
+
