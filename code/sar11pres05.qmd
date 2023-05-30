@@ -8,17 +8,24 @@ editor: visual
 library(knitr)
 library(tidyverse)
 library(kableExtra)
-library(DT)
 library(reshape2)
 library(Biostrings)
-library(tm)
+knitr::opts_chunk$set(
+  echo = TRUE,         # Display code chunks
+  eval = FALSE,         # Evaluate code chunks
+  warning = FALSE,     # Hide warnings
+  message = FALSE,     # Hide messages
+  fig.width = 6,       # Set plot width in inches
+  fig.height = 4,      # Set plot height in inches
+  fig.align = "center" # Align plots to the center
+)
 ```
 
 ## **SAR11 Bacteria Comparative Genomics Project**
 
 SAR11 is a group of small, carbon-oxidizing bacteria that reach a global estimated population size of 2.4×10^28^ cells-approximately 25% of all plankton. They play a key role in the ocean's environment.
 
-The goal of this comparative genomics project is to find presense and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.
+The goal of this comparative genomics project is to find presence and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.
 
 ## Methods
 
