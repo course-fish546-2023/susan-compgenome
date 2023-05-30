@@ -396,272 +396,140 @@
 <section id="sar11-bacteria-comparative-genomics-project" class="slide level2">
 <h2><strong>SAR11 Bacteria Comparative Genomics Project</strong></h2>
 <p>SAR11 is a group of small, carbon-oxidizing bacteria that reach a global estimated population size of 2.4×10<sup>28</sup> cells-approximately 25% of all plankton. They play a key role in the ocean’s environment.</p>
-<p>The goal of this comparative genomics project is to find presense and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.</p>
+<p>The goal of this comparative genomics project is to find presence and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.</p>
 </section>
-<section id="methods" class="slide level2">
-<h2>Methods</h2>
-<ul>
-<li>Determine goal of the project</li>
-<li>Decided which genomes to use and obtained them from the NCBI database</li>
-<li>Coding
-<ul>
-<li>Make a database</li>
-<li>Get the query sequence</li>
-<li>Run BLAST</li>
-<li>Joining blast table with annotation table</li>
-</ul></li>
-</ul>
-<p>The code was based on week 01 assignment from Fish546 Spring 23.</p>
-</section>
-<section id="code-1.1" class="slide level2">
-<h2>Code 1.1</h2>
-<p>Created two plots and one table.</p>
-<p>In the following slides there will be:</p>
-<ul>
-<li><p>Histogram for the Scoring for the comparing of two genomes</p></li>
-<li><p>Table of the joined annotation table and BLAST</p></li>
-<li><p>Bar plot of the top 10 protein hits</p></li>
-</ul>
-</section>
-<section id="initial-code" class="slide level2">
-<h2>Initial Code</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="ex">/home/shared/ncbi-blast-2.11.0+/bin/makeblastdb</span> <span class="dt">\</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a>-in ../data_raw/012276695protein.faa <span class="dt">\</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a>-dbtype prot <span class="dt">\</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a>-out ../blastdb/95-protein</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>
-
-Building a new DB, current time: 04/27/2023 23:42:13
-New DB name:   /home/shared/8TB_HDD_02/sggarcia/github/susan-compgenome/blastdb/95-protein
-New DB title:  ../data_raw/012276695protein.faa
-Sequence type: Protein
-Deleted existing Protein BLAST database named /home/shared/8TB_HDD_02/sggarcia/github/susan-compgenome/blastdb/95-protein
-Keep MBits: T
-Maximum file size: 1000000000B
-Adding sequences from FASTA; added 1414 sequences in 0.0320859 seconds.</code></pre>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1"></a><span class="ex">/home/shared/ncbi-blast-2.11.0+/bin/blastp</span> <span class="dt">\</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a>-query ../data_raw/000012345.1protein.faa <span class="dt">\</span></span>
-<span id="cb3-3"><a href="#cb3-3"></a>-db ../blastdb/95-protein <span class="dt">\</span></span>
-<span id="cb3-4"><a href="#cb3-4"></a>-out ../output/95-45_blastp.tab <span class="dt">\</span></span>
-<span id="cb3-5"><a href="#cb3-5"></a>-evalue 1E-20 <span class="dt">\</span></span>
-<span id="cb3-6"><a href="#cb3-6"></a>-num_threads 20 <span class="dt">\</span></span>
-<span id="cb3-7"><a href="#cb3-7"></a>-max_target_seqs 1 <span class="dt">\</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a>-outfmt 6</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Warning: [blastp] Examining 5 or more matches is recommended</code></pre>
-</div>
+<section id="combined-tables-for-comparison" class="slide level2">
+<h2>Combined Tables for Comparison</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Join the data frames</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>joinedtotal_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(joined1_df, joined2_df, joined3_df, joined4_df, joined5_df, joined6_df)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#You may print the table with kable</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#kable(head(joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") </span></span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#Scrollable tables</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="fu">datatable</span>(<span class="fu">head</span>(joinedtotal_df), <span class="at">options =</span> <span class="fu">list</span>(<span class="at">scrollX =</span> <span class="cn">TRUE</span>, <span class="at">scrollY =</span> <span class="st">"400px"</span>, <span class="at">scrollCollapse =</span> <span class="cn">TRUE</span>, <span class="at">paging =</span> <span class="cn">FALSE</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="histogram-for-the-blast-file-of-95-45" class="slide level2">
-<h2>Histogram for the BLAST file of 95-45</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Read FASTA file</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a></span>
-<span id="cb5-3"><a href="#cb5-3"></a>blast_file <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../output/95-45_blastp.tab"</span>, <span class="at">sep =</span> <span class="st">'</span><span class="sc">\t</span><span class="st">'</span>, <span class="at">header =</span> <span class="cn">FALSE</span>) </span>
-<span id="cb5-4"><a href="#cb5-4"></a></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="co">#Extract columns desired</span></span>
-<span id="cb5-6"><a href="#cb5-6"></a></span>
-<span id="cb5-7"><a href="#cb5-7"></a>blast2<span class="fl">.0</span>_file <span class="ot">&lt;-</span> blast_file[, <span class="fu">c</span>(<span class="st">"V1"</span>, <span class="st">"V2"</span>, <span class="st">"V11"</span>, <span class="st">"V12"</span>)]</span>
-<span id="cb5-8"><a href="#cb5-8"></a></span>
-<span id="cb5-9"><a href="#cb5-9"></a><span class="co">#Make into dataframe</span></span>
-<span id="cb5-10"><a href="#cb5-10"></a></span>
-<span id="cb5-11"><a href="#cb5-11"></a>blast2<span class="fl">.0</span>_file_df <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(blast2<span class="fl">.0</span>_file)</span>
-<span id="cb5-12"><a href="#cb5-12"></a><span class="fu">colnames</span>(blast2<span class="fl">.0</span>_file_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Query"</span>, <span class="st">"Database"</span>, <span class="st">"Eval"</span>, <span class="st">"Score"</span>)</span>
-<span id="cb5-13"><a href="#cb5-13"></a></span>
-<span id="cb5-14"><a href="#cb5-14"></a><span class="co"># Plot histogram using ggplot2</span></span>
-<span id="cb5-15"><a href="#cb5-15"></a></span>
-<span id="cb5-16"><a href="#cb5-16"></a><span class="fu">ggplot</span>(blast2<span class="fl">.0</span>_file_df, <span class="fu">aes</span>(<span class="at">x =</span> Score)) <span class="sc">+</span></span>
-<span id="cb5-17"><a href="#cb5-17"></a>  <span class="fu">geom_histogram</span>(<span class="at">binwidth =</span> <span class="dv">50</span>, <span class="at">fill =</span> <span class="st">"blue"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb5-18"><a href="#cb5-18"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Histogram of Score"</span>, <span class="at">x =</span> <span class="st">"Score"</span>, <span class="at">y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-</div>
-<img data-src="sar11pres05_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"></section>
-<section id="histogram-figure" class="slide level2">
-<h2>Histogram Figure</h2>
-
-<img data-src="images/Histo.png" class="r-stretch"></section>
-<section id="table-for-the-combination-of-blast-of-95-45" class="slide level2">
-<h2>Table for the combination of BLAST of 95-45</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">#Having the comparison of 95 to 45 into a CSV file.</span></span>
-<span id="cb6-2"><a href="#cb6-2"></a></span>
-<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># Read out the blast file into csv</span></span>
-<span id="cb6-4"><a href="#cb6-4"></a>bltabl <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../output/95-45_blastp.tab"</span>, <span class="at">sep =</span> <span class="st">'</span><span class="sc">\t</span><span class="st">'</span>, <span class="at">header =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-5"><a href="#cb6-5"></a></span>
-<span id="cb6-6"><a href="#cb6-6"></a></span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="co">#Extract columns desired</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a> bltabl_2<span class="fl">.0</span> <span class="ot">&lt;-</span> bltabl[, <span class="fu">c</span>(<span class="st">"V1"</span>, <span class="st">"V2"</span>, <span class="st">"V11"</span>, <span class="st">"V12"</span>)]</span>
-<span id="cb6-9"><a href="#cb6-9"></a></span>
-<span id="cb6-10"><a href="#cb6-10"></a><span class="co">#Make into dataframe</span></span>
-<span id="cb6-11"><a href="#cb6-11"></a></span>
-<span id="cb6-12"><a href="#cb6-12"></a>bltabl2<span class="fl">.0</span>_df <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(bltabl_2<span class="fl">.0</span>)</span>
-<span id="cb6-13"><a href="#cb6-13"></a></span>
-<span id="cb6-14"><a href="#cb6-14"></a><span class="fu">colnames</span>(bltabl2<span class="fl">.0</span>_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Query"</span>, <span class="st">"Database"</span>, <span class="st">"Eval"</span>, <span class="st">"Score"</span>)</span>
-<span id="cb6-15"><a href="#cb6-15"></a></span>
-<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#Reading the file from 95 protein to CSV file.</span></span>
-<span id="cb6-17"><a href="#cb6-17"></a></span>
-<span id="cb6-18"><a href="#cb6-18"></a>spgo <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"../output/95protein.tab"</span>, <span class="at">sep =</span> <span class="st">'</span><span class="sc">\t</span><span class="st">'</span>, <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-19"><a href="#cb6-19"></a><span class="fu">colnames</span>(spgo) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Database"</span>, <span class="st">"Protein"</span>, <span class="st">"Coding_Sequence"</span>)</span>
-<span id="cb6-20"><a href="#cb6-20"></a></span>
-<span id="cb6-21"><a href="#cb6-21"></a><span class="co"># Join the data frames</span></span>
-<span id="cb6-22"><a href="#cb6-22"></a>joined_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(bltabl2<span class="fl">.0</span>_df, spgo, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Database"</span> <span class="ot">=</span> <span class="st">"Database"</span>))</span>
-<span id="cb6-23"><a href="#cb6-23"></a></span>
-<span id="cb6-24"><a href="#cb6-24"></a><span class="co"># Print the table with kable</span></span>
-<span id="cb6-25"><a href="#cb6-25"></a><span class="fu">kable</span>(<span class="fu">head</span>(joined_df, <span class="at">n =</span> <span class="dv">10</span>), <span class="at">caption =</span> <span class="st">"Joined data frame with kable formatting (first 10 rows)"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-
-<table>
-<caption>Joined data frame with kable formatting (first 10 rows)</caption>
- <thead>
-  <tr>
-   <th style="text-align:left;"> Query </th>
-   <th style="text-align:left;"> Database </th>
-   <th style="text-align:right;"> Eval </th>
-   <th style="text-align:right;"> Score </th>
-   <th style="text-align:left;"> Protein </th>
-   <th style="text-align:left;"> Coding_Sequence </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> AAZ20826.1 </td>
-   <td style="text-align:left;"> QIZ21403.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 677 </td>
-   <td style="text-align:left;"> ketol-acid reductoisomerase [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MKMFYEKDADVDLIKSKKIAIFGYGSQGHAHALNLKDSGAKEVVVALRDGSASKAKAESKGLKVMGLSDAAEWAEVAMILTPDELQAAIYKNHIDQRIKPGTSIAFAHGLNIHYKLIEARKDLDVFMVAPKGPGHLVRSEFERGGGVPCLFAVHQDGTGKARDLALSYASAIGGGKSGIIETTFKDECETDLFGEQSVLCGGLVELIKNGFETLTEAGYEPEMAYFECLHEVKLIVDLIYEGGIANMNYSISNTAEYGEYVSGKKVVDSESKKRMKEVLADIQSGKFTKDWMKECEGGQKNFLKMRKDLADHPIEKVGAELRAMMPWIGKKKLIDSDKS </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20827.1 </td>
-   <td style="text-align:left;"> QIZ21402.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 338 </td>
-   <td style="text-align:left;"> acetolactate synthase small subunit [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MAKSKSAYSTPSKLGKIDTHIIVVWVDNEASVLSRVVGLFSGRGYNIESLAVAEVDQKNNLSRITIVTTGTPQVIEQIVLQLKKLVPVHKVGNFKREDKKVIFKEMALLKVVANSGKINKALNACKKYNPVILDQTNKSAVIQITALRREIDKLIKNLKPFGLVSASRTGAVAMTRGAEIFN </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20828.1 </td>
-   <td style="text-align:left;"> QIZ21401.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 1095 </td>
-   <td style="text-align:left;"> acetolactate synthase 3 large subunit [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MGNLYTGAEIVFKCLEDQKVDHIFGYPGGAVLPIYDELKNHPSIKHILVRHEQGAGHAAEGYARSSGKPGVVLVTSGPGATNVVTALTDAYMDSVPLVCISGQVPTHLIGTDAFQECDTTGITRPCTKHNWLVKDINDLPRIMHEAFEVATTGRPGPVLVDIPKDIQFAKAKYLKPKKEKKLNGKVLSKFNQKEIDQLVDLMKKSSKPVFYTGGGVINSGPGASELLRELVALTGFPITSTLQGLGAYPGDDNQFLGMLGMHGTYEANNAMHDCDLLINIGARFDDRITGKIDEFSPKSKKVHIDIDPSSINKIVKVDLAIVGDVSDVIKSTTKTLKKKNLNLEKSNKQKISKWWQQIQKWRTKQSLNFINSDKIIKPQHAVQRLYELTKNQDTYITTEVGQHQMWAAQHYKFNKPNRWMTSGGLGTMGYGLPAAIGVQVAHPKKLVVDIAGEASILMTMQEISTAVQYNLPVKIFILNNQYMGMVRQWQELLHEKNYSESYSEALPDFVKLAEAYGCVGIRAKDPSELDEKIEEMINIDRPVIFDCHVDQAENCYPMIPSGKPHNQMLLGPKDQEENKITGKGKSLV </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20829.1 </td>
-   <td style="text-align:left;"> QIZ21400.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 475 </td>
-   <td style="text-align:left;"> tRNA (adenosine(37)-N6)-dimethylallyltransferase MiaA [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MDKQSKIILISGPTASGKTNFAVKIAKKIQGEIINADSMQVYKKLKILTARPNKIEQKDIKHHLYGVIDLNKKFSTGQWLELATKKIKNIQKKKKIPILVGGTGLYFQSLINGLVKIPEIPLKFRNKVRLMSKREGQKKFYKKLLKLDPKVKDKFDPNDTQRSIRAYEIKSYTDNSMYNWLASTESEFKNSDFLKLFIETKREKLIERINLRTLNMINSGAINEVKKFLKLKIRKDQSVNKVIGIAELTQYLNHEVTLEEAKELISIKTRQYAKRQATWARTRMTSWKKIKPTRIGDFIKKLNKSLLKLDQ </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20830.1 </td>
-   <td style="text-align:left;"> QIZ21399.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 838 </td>
-   <td style="text-align:left;"> Do family serine endopeptidase [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MNRIKKLFIIIFAISFASHVLAKDAPASFADLAEKLMPSVVNISTTTTVVTNANPFPGFEFPPGSPFADMFKEFGTPQTRKSAALGSGFIIDEKGVVITNNHVIQDAEDIVVRVGGDKEYKATIIGQDPLSDIAVLQIDSKEKFIPVSFGDSDKARIGDWVIAIGNPFGLGGTVTAGIISARNRSIGLSRYEDYIQTDASINSGNSGGPLFDMNGDVIGINTAILGKGGSIGIGFSIPSNSAKKVVSQLIEFGETKRGWLGVRIQVVTKEIADVEKLDEPRGALVASVAEKSPSDKAGIKAGDIILEFNGTKIKEMKELPIIVAQTEVGKTIEVKVWRNKKEITKKIKLGRLETSSDFKKKEPKDTKRETPEISEIKSLKIIVRPLNDNDIKERKLPNQTTGLVITNIGKNSPVDYLNVGDIIVEAQKKKIKSAKNLEDILDTVLKSNQKTILIVIYNNQNQRRYIGVKLD </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20831.1 </td>
-   <td style="text-align:left;"> QIZ21398.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 114 </td>
-   <td style="text-align:left;"> DUF2065 domain-containing protein [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MKELIIAFGLFLFIEGILYALFPSKMKSMLKKMELIKDTQLRSGGLVFAVIGFIIIWYIKS </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20832.1 </td>
-   <td style="text-align:left;"> QIZ21397.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 516 </td>
-   <td style="text-align:left;"> protease modulator HflC [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MKAQKILLPIIILIGALAFFSIFIVKEVNQAIVLQFGDPKKIILKPGLNFKIPFIQNVVFLDSRILNLDTPPAEVIASDQKRLIVDAFARFQIIDPLKFYISVGNERVARSRLATIINSRIRNVLGQQELQTLLSKDRSKQMSLIQEGVNAEAQKFGIKIVDVRIKRADLPQANSEAIYRRMQTEREREAKEFRARGAEMAVTITSTADKDVSVLLANANKDSEIMKGQGDGERNKIFADAFGRDPEFFAFYRAMQAYETALIGGDTSVILSPDSEFFKFFGNIKPKSQ </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20833.1 </td>
-   <td style="text-align:left;"> QIZ21396.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 640 </td>
-   <td style="text-align:left;"> FtsH protease activity modulator HflK [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MSDDFQGRGGSPWGTPPGGGNGSGKGPTPPDIDALIRDIQSKINRFLPGGSSSGKKPIGLILIILAFVWLASGLYRVGPDEQGVVLRFGKFVKTTQPGLHYHIPIPVETVQTPKVTKVNRIDIGFRSERDSGFSQGGGVADVPQESLMLTGDENIVNIDFSVFWVIKDAGKFLFEIQDPEGTVKAAAETAMREVIAKSKIQPVLTEGRALIEVETQEIIQSILDEYNSGIQITQVQTQKADPPDQVIDAFRDVQAARADMERSKNEAEAYANDVIPRARGEAARIMQAAEAYKQKVVAQAEGEASRFVSIYNEYAKAKEVTQERMYLETMEKVLADIDKVIIEKNAGAGVVPYLPLPELGKKKASN </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20834.1 </td>
-   <td style="text-align:left;"> QIZ21395.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 549 </td>
-   <td style="text-align:left;"> ATP-binding protein [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MTDKKPELSDAMKKKLEPRKFTKNPILGTKFTIAVSSAKGGVGKSTFATNLALALKQIGCKVGLLDADIYGPSIPKMFDINEKPKSDGQTLTPITKYDIQCMSIGFLADQQTPMIWRGPMVTSAIKTFTQKVGWKDLDFIIVDMPPGTGDTQLTFSQEIKIDGAIIVSTPQEVALLDVKRGIKMFDKLGVKILGLVDNMSYFTGDDGKKYKIFGEGGVKRTAKEFEKEFLGEIPINPEVGKCGDEGKPIVEANPEHEISKIYLDFAKKIKSTYL </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AAZ20835.1 </td>
-   <td style="text-align:left;"> QIZ21388.1 </td>
-   <td style="text-align:right;"> 0 </td>
-   <td style="text-align:right;"> 617 </td>
-   <td style="text-align:left;"> FAD-dependent thymidylate synthase [Candidatus Pelagibacter giovannonii] </td>
-   <td style="text-align:left;"> MKLTTEQTQEIKDQQSQQNQTKRVTVPALESILYEAMPALDHGFVRVVDYMGDDSSIVQSARVSYGKGTKQVSTDAGLIKYLMRHWHSTPFEMCEIKYHVKLPIFIARQWIRHRTANVNEYSARYSILDKEFYLPSAKNLAAQSSINRQGRGDVIEGEQAKEVLELLKNDAEQTYDNYEMMLNQRFDGSTINENKKGLARELARMNLTLNTYTQWYWKTDLLNLMNFLRLRADSHAQYEIRVYADIMLDTVKKWVPITYDAFMDYRVGGTEVSAKGKAIIQKFIKGENVDISSSGLSKREWNELMQAFNLDDKKV </td>
-  </tr>
-</tbody>
-</table>
-
-</div>
+<section id="protein-expression-basic-heatmap" class="slide level2">
+<h2>Protein Expression Basic Heatmap</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Summarize the data</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>summarized_df <span class="ot">&lt;-</span> joinedtotal_df <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>  <span class="fu">group_by</span>(Protein, Organism) <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>  <span class="fu">summarize</span>(<span class="at">mean_value =</span> <span class="fu">mean</span>(Score))</span>
+<span id="cb2-5"><a href="#cb2-5"></a></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co"># Create a wide-format table</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>wide_df <span class="ot">&lt;-</span> summarized_df <span class="sc">%&gt;%</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Organism, <span class="at">values_from =</span> mean_value)</span>
+<span id="cb2-9"><a href="#cb2-9"></a></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co"># Exclude non-numeric columns</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a>data_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(wide_df[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb2-12"><a href="#cb2-12"></a></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co"># Define custom color palette</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a>my_palette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"orange"</span>, <span class="st">"purple"</span>, <span class="st">"white"</span>))(<span class="at">n =</span> <span class="dv">100</span>)</span>
+<span id="cb2-15"><a href="#cb2-15"></a></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co"># Generate the heatmap with custom colors and row names</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="fu">heatmap</span>(data_mat, <span class="at">Rowv =</span> <span class="cn">NA</span>, <span class="at">Colv =</span> <span class="cn">NA</span>, <span class="at">col =</span> my_palette, <span class="at">scale =</span> <span class="st">"column"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18"></a>        <span class="at">labRow =</span> wide_df<span class="sc">$</span>Protein)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="table-figure" class="slide level2">
-<h2>Table Figure</h2>
-
-<img data-src="images/table-01.png" class="r-stretch"></section>
-<section id="plotting-the-top-10-protein-hits" class="slide level2">
-<h2>Plotting the top 10 Protein Hits</h2>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Read joined blast table with annotation table</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a>joined_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(bltabl2<span class="fl">.0</span>_df, spgo, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Database"</span> <span class="ot">=</span> <span class="st">"Database"</span>))</span>
-<span id="cb7-3"><a href="#cb7-3"></a></span>
-<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># Select the column of interest</span></span>
-<span id="cb7-5"><a href="#cb7-5"></a>column_name <span class="ot">&lt;-</span> <span class="st">"Protein"</span>  <span class="co"># Replace with the name of the column of interest</span></span>
-<span id="cb7-6"><a href="#cb7-6"></a>column_data <span class="ot">&lt;-</span> joined_df[[column_name]]</span>
-<span id="cb7-7"><a href="#cb7-7"></a></span>
-<span id="cb7-8"><a href="#cb7-8"></a><span class="co"># Count the occurrences of the strings in the column</span></span>
-<span id="cb7-9"><a href="#cb7-9"></a>string_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(column_data)</span>
-<span id="cb7-10"><a href="#cb7-10"></a></span>
-<span id="cb7-11"><a href="#cb7-11"></a><span class="co"># Convert to a data frame, sort by count, and select the top 10</span></span>
-<span id="cb7-12"><a href="#cb7-12"></a>string_counts_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(string_counts)</span>
-<span id="cb7-13"><a href="#cb7-13"></a><span class="fu">colnames</span>(string_counts_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"String"</span>, <span class="st">"Count"</span>)</span>
-<span id="cb7-14"><a href="#cb7-14"></a>string_counts_df <span class="ot">&lt;-</span> string_counts_df[<span class="fu">order</span>(string_counts_df<span class="sc">$</span>Count, <span class="at">decreasing =</span> <span class="cn">TRUE</span>), ]</span>
-<span id="cb7-15"><a href="#cb7-15"></a>top_10_strings <span class="ot">&lt;-</span> <span class="fu">head</span>(string_counts_df, <span class="at">n =</span> <span class="dv">10</span>)</span>
-<span id="cb7-16"><a href="#cb7-16"></a></span>
-<span id="cb7-17"><a href="#cb7-17"></a><span class="co"># Plot the top 10 most common strings using ggplot2</span></span>
-<span id="cb7-18"><a href="#cb7-18"></a><span class="fu">ggplot</span>(top_10_strings, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(String, <span class="sc">-</span>Count), <span class="at">y =</span> Count, <span class="at">fill =</span> String)) <span class="sc">+</span></span>
-<span id="cb7-19"><a href="#cb7-19"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
-<span id="cb7-20"><a href="#cb7-20"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 10 Protein hits"</span>,</span>
-<span id="cb7-21"><a href="#cb7-21"></a>       <span class="at">x =</span> column_name,</span>
-<span id="cb7-22"><a href="#cb7-22"></a>       <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
-<span id="cb7-23"><a href="#cb7-23"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb7-24"><a href="#cb7-24"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb7-25"><a href="#cb7-25"></a>  <span class="fu">coord_flip</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
+<section id="protein-expression-heatmap" class="slide level2">
+<h2>Protein Expression Heatmap</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Summarize the data</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>summarized_df <span class="ot">&lt;-</span> joinedtotal_df <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="fu">group_by</span>(Protein, Organism) <span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>  <span class="fu">summarize</span>(<span class="at">mean_value =</span> <span class="fu">mean</span>(Score))</span>
+<span id="cb3-5"><a href="#cb3-5"></a></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="co"># Create a wide-format table</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>wide_df <span class="ot">&lt;-</span> summarized_df <span class="sc">%&gt;%</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Organism, <span class="at">values_from =</span> mean_value)</span>
+<span id="cb3-9"><a href="#cb3-9"></a></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co"># Exclude non-numeric columns</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>data_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(wide_df[, <span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb3-12"><a href="#cb3-12"></a></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co"># Handle missing, infinite, and NaN values</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a>data_mat[<span class="fu">is.na</span>(data_mat)] <span class="ot">&lt;-</span> <span class="dv">0</span>  <span class="co"># Replace missing values with 0 or use appropriate imputation method</span></span>
+<span id="cb3-15"><a href="#cb3-15"></a>data_mat[<span class="sc">!</span><span class="fu">is.finite</span>(data_mat)] <span class="ot">&lt;-</span> <span class="dv">0</span>  <span class="co"># Replace infinite and NaN values with 0 or other appropriate values</span></span>
+<span id="cb3-16"><a href="#cb3-16"></a></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="co"># Define custom color palette</span></span>
+<span id="cb3-18"><a href="#cb3-18"></a>my_palette <span class="ot">&lt;-</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"darkblue"</span>, <span class="st">"white"</span>, <span class="st">"darkred"</span>))(<span class="at">n =</span> <span class="dv">100</span>)</span>
+<span id="cb3-19"><a href="#cb3-19"></a></span>
+<span id="cb3-20"><a href="#cb3-20"></a><span class="co"># Increase figure size and adjust margins</span></span>
+<span id="cb3-21"><a href="#cb3-21"></a><span class="fu">options</span>(<span class="at">repr.plot.width =</span> <span class="dv">10</span>, <span class="at">repr.plot.height =</span> <span class="dv">6</span>)</span>
+<span id="cb3-22"><a href="#cb3-22"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>))</span>
+<span id="cb3-23"><a href="#cb3-23"></a></span>
+<span id="cb3-24"><a href="#cb3-24"></a><span class="co"># Generate the heatmap with custom colors, row names, dendrograms, and color legend</span></span>
+<span id="cb3-25"><a href="#cb3-25"></a><span class="fu">heatmap</span>(data_mat, <span class="at">Rowv =</span> <span class="cn">TRUE</span>, <span class="at">Colv =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> my_palette, <span class="at">scale =</span> <span class="st">"column"</span>,</span>
+<span id="cb3-26"><a href="#cb3-26"></a>        <span class="at">labRow =</span> wide_df<span class="sc">$</span>Protein, <span class="at">cex.lab =</span> <span class="fl">0.6</span>, <span class="at">cex.axis =</span> <span class="fl">0.6</span>, <span class="at">cex.main =</span> <span class="fl">0.9</span>,</span>
+<span id="cb3-27"><a href="#cb3-27"></a>        <span class="at">main =</span> <span class="st">"Heatmap of Protein Expression"</span>,</span>
+<span id="cb3-28"><a href="#cb3-28"></a>        <span class="at">xlab =</span> <span class="st">"Organism"</span>)</span>
+<span id="cb3-29"><a href="#cb3-29"></a></span>
+<span id="cb3-30"><a href="#cb3-30"></a><span class="co"># Add color legend</span></span>
+<span id="cb3-31"><a href="#cb3-31"></a><span class="fu">legend</span>(<span class="st">"bottomleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Low"</span>, <span class="st">"Medium"</span>, <span class="st">"High"</span>), <span class="at">fill =</span> my_palette[<span class="fu">seq</span>(<span class="dv">1</span>, <span class="dv">100</span>, <span class="at">length.out =</span> <span class="dv">3</span>)],</span>
+<span id="cb3-32"><a href="#cb3-32"></a>       <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb3-33"><a href="#cb3-33"></a></span>
+<span id="cb3-34"><a href="#cb3-34"></a><span class="co"># Adjust plot margins</span></span>
+<span id="cb3-35"><a href="#cb3-35"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<img data-src="sar11pres05_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
-<section id="barplot-figure" class="slide level2">
-<h2>Barplot Figure</h2>
-
-<img data-src="images/barplot.png" class="r-stretch"></section>
+</section>
+<section id="combination-of-6-figures-of-protein-hits" class="slide level2">
+<h2>Combination of 6 figures of Protein Hits</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Create a list to store the data frames for each figure</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>top_10_strings_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Loop through each figure</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>) {</span>
+<span id="cb4-6"><a href="#cb4-6"></a>  <span class="co"># Read joined blast table with annotation table</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>  joined_df <span class="ot">&lt;-</span> <span class="fu">left_join</span>(<span class="fu">get</span>(<span class="fu">paste0</span>(<span class="st">"bltabl"</span>, i, <span class="st">"_2.0_df"</span>)), spgo, <span class="at">by =</span> <span class="st">"Database"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8"></a>  </span>
+<span id="cb4-9"><a href="#cb4-9"></a>  <span class="co"># Select the column of interest</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a>  column_name <span class="ot">&lt;-</span> <span class="st">"Protein"</span>  <span class="co"># Replace with the name of the column of interest</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a>  column_data <span class="ot">&lt;-</span> joined_df[[column_name]]</span>
+<span id="cb4-12"><a href="#cb4-12"></a>  </span>
+<span id="cb4-13"><a href="#cb4-13"></a>  <span class="co"># Count the occurrences of the strings in the column</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a>  string_counts <span class="ot">&lt;-</span> <span class="fu">table</span>(column_data)</span>
+<span id="cb4-15"><a href="#cb4-15"></a>  </span>
+<span id="cb4-16"><a href="#cb4-16"></a>  <span class="co"># Convert to a data frame, sort by count, and select the top 10</span></span>
+<span id="cb4-17"><a href="#cb4-17"></a>  string_counts_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(string_counts)</span>
+<span id="cb4-18"><a href="#cb4-18"></a>  <span class="fu">colnames</span>(string_counts_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"String"</span>, <span class="st">"Count"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19"></a>  string_counts_df <span class="ot">&lt;-</span> string_counts_df[<span class="fu">order</span>(string_counts_df<span class="sc">$</span>Count, <span class="at">decreasing =</span> <span class="cn">TRUE</span>), ]</span>
+<span id="cb4-20"><a href="#cb4-20"></a>  top_10_strings <span class="ot">&lt;-</span> <span class="fu">head</span>(string_counts_df, <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb4-21"><a href="#cb4-21"></a>  </span>
+<span id="cb4-22"><a href="#cb4-22"></a>  <span class="co"># Store the top 10 strings data frame in the list</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a>  top_10_strings_list[[i]] <span class="ot">&lt;-</span> top_10_strings</span>
+<span id="cb4-24"><a href="#cb4-24"></a>}</span>
+<span id="cb4-25"><a href="#cb4-25"></a></span>
+<span id="cb4-26"><a href="#cb4-26"></a><span class="co"># Combine all data frames into one data frame</span></span>
+<span id="cb4-27"><a href="#cb4-27"></a>combined_data <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, top_10_strings_list)</span>
+<span id="cb4-28"><a href="#cb4-28"></a></span>
+<span id="cb4-29"><a href="#cb4-29"></a><span class="co"># Create a new column to identify the figure number</span></span>
+<span id="cb4-30"><a href="#cb4-30"></a>combined_data<span class="sc">$</span>Figure <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">each =</span> <span class="dv">10</span>)</span>
+<span id="cb4-31"><a href="#cb4-31"></a></span>
+<span id="cb4-32"><a href="#cb4-32"></a><span class="co"># Increase figure size</span></span>
+<span id="cb4-33"><a href="#cb4-33"></a><span class="fu">options</span>(<span class="at">repr.plot.width =</span> <span class="dv">10</span>, <span class="at">repr.plot.height =</span> <span class="dv">6</span>)</span>
+<span id="cb4-34"><a href="#cb4-34"></a></span>
+<span id="cb4-35"><a href="#cb4-35"></a><span class="co"># Plot the combined data using facet_wrap()</span></span>
+<span id="cb4-36"><a href="#cb4-36"></a><span class="fu">ggplot</span>(combined_data, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(String, <span class="sc">-</span>Count), <span class="at">y =</span> Count, <span class="at">fill =</span> String)) <span class="sc">+</span></span>
+<span id="cb4-37"><a href="#cb4-37"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb4-38"><a href="#cb4-38"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Top 10 Protein hits"</span>,</span>
+<span id="cb4-39"><a href="#cb4-39"></a>       <span class="at">x =</span> column_name,</span>
+<span id="cb4-40"><a href="#cb4-40"></a>       <span class="at">y =</span> <span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb4-41"><a href="#cb4-41"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb4-42"><a href="#cb4-42"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb4-43"><a href="#cb4-43"></a>        <span class="at">axis.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">5</span>),  <span class="co"># Adjust text size for axis labels</span></span>
+<span id="cb4-44"><a href="#cb4-44"></a>        <span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>),  <span class="co"># Adjust text size for axis titles</span></span>
+<span id="cb4-45"><a href="#cb4-45"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>)) <span class="sc">+</span>  <span class="co"># Adjust text size for plot title</span></span>
+<span id="cb4-46"><a href="#cb4-46"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb4-47"><a href="#cb4-47"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Figure, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
 <section id="next-steps" class="slide level2">
 <h2>Next Steps:</h2>
 <ul>
-<li>fasta to tab-delimited for the protein sequences to finish the joining</li>
-<li>figure out how this process can be done for multiple protein sequences from other SAR11 sequences
-<ul>
-<li>which sequences to be chosen?</li>
-</ul></li>
-<li>tyding up the figures that come from other pieces of code (understanding what the code does)</li>
+<li>idk bro</li>
 </ul>
 <div class="footer footer-default">
 

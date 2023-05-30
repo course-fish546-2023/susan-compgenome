@@ -229,8 +229,8 @@ datatable(head(joinedtotal_df), options = list(scrollX = TRUE, scrollY = "400px"
 ```
 
 # Two different Heatmaps
+Main HeatMap
 ```{r, eval=TRUE}
-
 # Summarize the data
 summarized_df <- joinedtotal_df %>%
   group_by(Protein, Organism) %>%
@@ -243,31 +243,32 @@ wide_df <- summarized_df %>%
 # Exclude non-numeric columns
 data_mat <- as.matrix(wide_df[, -1])
 
-# Define custom color palette
-my_palette <- colorRampPalette(c("orange", "purple", "white"))(n = 100)
+# Handle missing, infinite, and NaN values
+data_mat[is.na(data_mat)] <- 0  # Replace missing values with 0 or use appropriate imputation method
+data_mat[!is.finite(data_mat)] <- 0  # Replace infinite and NaN values with 0 or other appropriate values
 
-# Generate the heatmap with custom colors and row names
-heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
-        labRow = wide_df$Protein, main = "Heatmap Comparing 6", xlab = "Organism")
+# Define custom color palette
+my_palette <- colorRampPalette(c("darkblue", "white", "darkred"))(n = 100)
+
+# Increase figure size and adjust margins
+options(repr.plot.width = 10, repr.plot.height = 6)
+par(mar = c(6, 4, 3, 2))
+
+# Generate the heatmap with custom colors, row names, dendrograms, and color legend
+heatmap(data_mat, Rowv = TRUE, Colv = TRUE, col = my_palette, scale = "column",
+        labRow = wide_df$Protein, cex.lab = 0.6, cex.axis = 0.6, cex.main = 0.9,
+        main = "Heatmap of Protein Expression",
+        xlab = "Organism")
 
 # Add color legend
-color.legend <- function(color.palette, values, title = NULL, position = "topright") {
-  n <- length(color.palette)
-  x <- 0:(n - 1) / (n - 1)
-  y <- 0.5
-  rect(x, y, x + 1 / (n - 1), y + 1, col = color.palette, border = NA)
-  text((2 * x + 1) / 2, y + 1.5, labels = values, adj = c(0.5, 0), cex = 0.8)
-  if (!is.null(title)) {
-    mtext(title, side = 1, line = 1, cex = 0.8)
-  }
-}
-color.legend(color.palette = my_palette, values = c("Low", "Medium", "High"), title = "Legend")
+legend("bottomleft", legend = c("Low", "Medium", "High"), fill = my_palette[seq(1, 100, length.out = 3)],
+       bty = "n", cex = 0.8)
 
 # Adjust plot margins
-par(mar = c(6, 6, 3, 4))
+par(mar = c(6, 4, 3, 2))
 
 ```
-HeatMap comparing 6
+Initial Basic HeatMap 
 ```{r, eval=TRUE}
 # Summarize the data
 summarized_df <- joinedtotal_df %>%
@@ -289,12 +290,13 @@ heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
         labRow = wide_df$Protein)
 ```
 
-HeatMap comparing 4 with the top ten?
+HeatMap comparing 4 with the top ten
 ```{r, eval=TRUE}
 # Summarize the data
 summarized_df <- joinedtotal_df %>%
   group_by(Protein, Organism) %>%
-  summarize(mean_value = mean(Score))
+  summarize(mean_value = mean(Score)) %>%
+  ungroup()
 
 # Sort the summarized data by mean_value in descending order
 summarized_df <- summarized_df %>%
@@ -311,11 +313,22 @@ filtered_df <- wide_df %>%
 data_mat <- as.matrix(filtered_df[, -1])
 
 # Define custom color palette
-my_palette <- colorRampPalette(c("orange", "purple", "white"))(n = 100)
+my_palette <- colorRampPalette(c("orange", "purple", "pink"))(n = 100)
+
+# Increase figure size
+options(repr.plot.width = 8, repr.plot.height = 6)
 
 # Generate the heatmap with custom colors and row names
 heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
-        labRow = filtered_df$Protein)
+        labRow = filtered_df$Protein, cex.lab = 0.8, cex.axis = 0.8, cex.main = 0.9, main = "Heatmap with Top 10 Protein hits",
+        border = "black")  # Set border color to black
+
+# Add color legend
+legend("left", legend = c("Low", "Medium", "High"), fill = my_palette[seq(1, 100, length.out = 3)],
+       bty = "n", cex = 0.8)
+
+# Adjust plot margins
+par(mar = c(5, 4, 2, 1))
 
 ```
 
@@ -352,7 +365,6 @@ ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String
 
 ```
 
-
 Joined Dataset 2
 ```{r, eval=TRUE}
 # Read joined blast table with annotation table
@@ -383,7 +395,6 @@ ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String
   coord_flip()
 
 ```
-
 
 Joined Dataset 3
 ```{r, eval=TRUE}
@@ -543,6 +554,9 @@ combined_data <- do.call(rbind, top_10_strings_list)
 # Create a new column to identify the figure number
 combined_data$Figure <- rep(1:6, each = 10)
 
+# Increase figure size
+options(repr.plot.width = 10, repr.plot.height = 6)
+
 # Plot the combined data using facet_wrap()
 ggplot(combined_data, aes(x = reorder(String, -Count), y = Count, fill = String)) +
   geom_bar(stat = "identity", position = "dodge", color = "black") +
@@ -550,10 +564,11 @@ ggplot(combined_data, aes(x = reorder(String, -Count), y = Count, fill = String)
        x = column_name,
        y = "Count") +
   theme_minimal() +
-  theme(legend.position = "none") +
+  theme(legend.position = "none",
+        axis.text = element_text(size = 5),  # Adjust text size for axis labels
+        axis.title = element_text(size = 10),  # Adjust text size for axis titles
+        plot.title = element_text(size = 12)) +  # Adjust text size for plot title
   coord_flip() +
   facet_wrap(~ Figure, ncol = 3)
-
-
 ```
 
