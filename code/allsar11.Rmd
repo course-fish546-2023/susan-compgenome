@@ -1,4 +1,3 @@
----
 title: "SAR11 Protein Comparison"
 date: "2023-05-09"
 output:
@@ -10,16 +9,38 @@ output:
     toc_depth: 2
     code_folding: show
 ---
+
+
 # Project Information
 SAR11 is a group of small, carbon-oxidizing bacteria that reach a global estimated population size of 2.4×1028 cells-approximately 25% of all plankton. They play a key role in the ocean's environment.
 
-The goal of this comparative genomics project is to find presence and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.
+# Objective
+
+- Comparative genomics project to identify presence and absence of SAR11 genomes
+
+- Genomes obtained from NCBI database
+
+# Workflow:
+
+1. Data acquisition from NCBI database
+
+2. Genome assembly and quality assessment
+
+3. Comparative analysis of SAR11 genomes
+
+4. Visualization 
+
+The BLASTing of the reference genome was done in another file. The URL is attached here to peruse for a more step by step flow. 
+
+RPubs Link: https://rpubs.com/sggarcia6/1039843
 
 
-# Additional Information:
+# Goal for the final figure:
 
 Goal for the final figure.
 ![](../code/images/hope.png)
+
+# Workflow for other genomes
 
 RPubs Link for Euryarchaeota: https://rpubs.com/sggarcia6/1042560
 
@@ -229,7 +250,7 @@ datatable(head(joinedtotal_df), options = list(scrollX = TRUE, scrollY = "400px"
 ```
 
 # Two different Heatmaps
-Main HeatMap
+## Main HeatMap
 ```{r, eval=TRUE}
 # Summarize the data
 summarized_df <- joinedtotal_df %>%
@@ -268,7 +289,7 @@ legend("bottomleft", legend = c("Low", "Medium", "High"), fill = my_palette[seq(
 par(mar = c(6, 4, 3, 2))
 
 ```
-Initial Basic HeatMap 
+## Initial Basic HeatMap 
 ```{r, eval=TRUE}
 # Summarize the data
 summarized_df <- joinedtotal_df %>%
@@ -290,7 +311,11 @@ heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
         labRow = wide_df$Protein)
 ```
 
-HeatMap comparing 4 with the top ten
+# Key Findings
+
+-  Compare protein expression levels across different organisms, where higher expression levels are represented by warmer colors (e.g., red) and lower expression levels by cooler colors (e.g., blue).
+
+## HeatMap comparing 4 with the top ten
 ```{r, eval=TRUE}
 # Summarize the data
 summarized_df <- joinedtotal_df %>%
@@ -333,6 +358,59 @@ par(mar = c(5, 4, 2, 1))
 ```
 
 # Top ten protein hits for all joined datasets
+
+## Combination of 6 figures of Protein Hits
+```{r, eval=TRUE}
+
+# Create a list to store the data frames for each figure
+top_10_strings_list <- list()
+
+# Loop through each figure
+for (i in 1:6) {
+  # Read joined blast table with annotation table
+  joined_df <- left_join(get(paste0("bltabl", i, "_2.0_df")), spgo, by = "Database")
+  
+  # Select the column of interest
+  column_name <- "Protein"  # Replace with the name of the column of interest
+  column_data <- joined_df[[column_name]]
+  
+  # Count the occurrences of the strings in the column
+  string_counts <- table(column_data)
+  
+  # Convert to a data frame, sort by count, and select the top 10
+  string_counts_df <- as.data.frame(string_counts)
+  colnames(string_counts_df) <- c("String", "Count")
+  string_counts_df <- string_counts_df[order(string_counts_df$Count, decreasing = TRUE), ]
+  top_10_strings <- head(string_counts_df, n = 10)
+  
+  # Store the top 10 strings data frame in the list
+  top_10_strings_list[[i]] <- top_10_strings
+}
+
+# Combine all data frames into one data frame
+combined_data <- do.call(rbind, top_10_strings_list)
+
+# Create a new column to identify the figure number
+combined_data$Figure <- rep(1:6, each = 10)
+
+# Increase figure size
+options(repr.plot.width = 10, repr.plot.height = 6)
+
+# Plot the combined data using facet_wrap()
+ggplot(combined_data, aes(x = reorder(String, -Count), y = Count, fill = String)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  labs(title = "Top 10 Protein hits",
+       x = column_name,
+       y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "none",
+        axis.text = element_text(size = 5),  # Adjust text size for axis labels
+        axis.title = element_text(size = 10),  # Adjust text size for axis titles
+        plot.title = element_text(size = 12)) +  # Adjust text size for plot title
+  coord_flip() +
+  facet_wrap(~ Figure, ncol = 3)
+```
+
 
 Joined Dataset 1 
 ```{r, eval=TRUE}
@@ -518,57 +596,3 @@ ggplot(top_10_strings, aes(x = reorder(String, -Count), y = Count, fill = String
   theme(legend.position = "none") +
   coord_flip()
 ```
-
-
-# Combination of 6 figures of Protein Hits
-```{r, eval=TRUE}
-
-# Create a list to store the data frames for each figure
-top_10_strings_list <- list()
-
-# Loop through each figure
-for (i in 1:6) {
-  # Read joined blast table with annotation table
-  joined_df <- left_join(get(paste0("bltabl", i, "_2.0_df")), spgo, by = "Database")
-  
-  # Select the column of interest
-  column_name <- "Protein"  # Replace with the name of the column of interest
-  column_data <- joined_df[[column_name]]
-  
-  # Count the occurrences of the strings in the column
-  string_counts <- table(column_data)
-  
-  # Convert to a data frame, sort by count, and select the top 10
-  string_counts_df <- as.data.frame(string_counts)
-  colnames(string_counts_df) <- c("String", "Count")
-  string_counts_df <- string_counts_df[order(string_counts_df$Count, decreasing = TRUE), ]
-  top_10_strings <- head(string_counts_df, n = 10)
-  
-  # Store the top 10 strings data frame in the list
-  top_10_strings_list[[i]] <- top_10_strings
-}
-
-# Combine all data frames into one data frame
-combined_data <- do.call(rbind, top_10_strings_list)
-
-# Create a new column to identify the figure number
-combined_data$Figure <- rep(1:6, each = 10)
-
-# Increase figure size
-options(repr.plot.width = 10, repr.plot.height = 6)
-
-# Plot the combined data using facet_wrap()
-ggplot(combined_data, aes(x = reorder(String, -Count), y = Count, fill = String)) +
-  geom_bar(stat = "identity", position = "dodge", color = "black") +
-  labs(title = "Top 10 Protein hits",
-       x = column_name,
-       y = "Count") +
-  theme_minimal() +
-  theme(legend.position = "none",
-        axis.text = element_text(size = 5),  # Adjust text size for axis labels
-        axis.title = element_text(size = 10),  # Adjust text size for axis titles
-        plot.title = element_text(size = 12)) +  # Adjust text size for plot title
-  coord_flip() +
-  facet_wrap(~ Figure, ncol = 3)
-```
-
