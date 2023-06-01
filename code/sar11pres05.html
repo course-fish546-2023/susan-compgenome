@@ -393,13 +393,19 @@
 </div>
 
 </section>
-<section id="sar11-bacteria-comparative-genomics-project" class="slide level2">
-<h2><strong>SAR11 Bacteria Comparative Genomics Project</strong></h2>
+<section id="sar11-bacteria-comparative-genomics-project" class="title-slide slide level1 center">
+<h1><strong>SAR11 Bacteria Comparative Genomics Project</strong></h1>
 <p>SAR11 is a group of small, carbon-oxidizing bacteria that reach a global estimated population size of 2.4×10<sup>28</sup> cells-approximately 25% of all plankton. They play a key role in the ocean’s environment.</p>
 <p>The goal of this comparative genomics project is to find presence and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.</p>
 </section>
-<section id="combined-tables-for-comparison" class="slide level2">
-<h2>Combined Tables for Comparison</h2>
+
+<section id="worklflow" class="title-slide slide level1 center">
+<h1>Worklflow</h1>
+
+</section>
+
+<section id="combined-tables-for-comparison" class="title-slide slide level1 center">
+<h1>Combined Tables for Comparison</h1>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Join the data frames</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a>joinedtotal_df <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(joined1_df, joined2_df, joined3_df, joined4_df, joined5_df, joined6_df)</span>
@@ -411,8 +417,9 @@
 <span id="cb1-8"><a href="#cb1-8"></a><span class="fu">datatable</span>(<span class="fu">head</span>(joinedtotal_df), <span class="at">options =</span> <span class="fu">list</span>(<span class="at">scrollX =</span> <span class="cn">TRUE</span>, <span class="at">scrollY =</span> <span class="st">"400px"</span>, <span class="at">scrollCollapse =</span> <span class="cn">TRUE</span>, <span class="at">paging =</span> <span class="cn">FALSE</span>))  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="protein-expression-basic-heatmap" class="slide level2">
-<h2>Protein Expression Basic Heatmap</h2>
+
+<section id="protein-expression-basic-heatmap" class="title-slide slide level1 center">
+<h1>Protein Expression Basic Heatmap</h1>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Summarize the data</span></span>
 <span id="cb2-2"><a href="#cb2-2"></a>summarized_df <span class="ot">&lt;-</span> joinedtotal_df <span class="sc">%&gt;%</span></span>
@@ -434,8 +441,9 @@
 <span id="cb2-18"><a href="#cb2-18"></a>        <span class="at">labRow =</span> wide_df<span class="sc">$</span>Protein)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="protein-expression-heatmap" class="slide level2">
-<h2>Protein Expression Heatmap</h2>
+
+<section id="protein-expression-heatmap" class="title-slide slide level1 center">
+<h1>Protein Expression Heatmap</h1>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Summarize the data</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a>summarized_df <span class="ot">&lt;-</span> joinedtotal_df <span class="sc">%&gt;%</span></span>
@@ -474,8 +482,9 @@
 <span id="cb3-35"><a href="#cb3-35"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="combination-of-6-figures-of-protein-hits" class="slide level2">
-<h2>Combination of 6 figures of Protein Hits</h2>
+
+<section id="combination-of-6-figures-of-protein-hits" class="title-slide slide level1 center">
+<h1>Combination of 6 figures of Protein Hits</h1>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Create a list to store the data frames for each figure</span></span>
 <span id="cb4-2"><a href="#cb4-2"></a>top_10_strings_list <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
@@ -526,10 +535,18 @@
 <span id="cb4-47"><a href="#cb4-47"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> Figure, <span class="at">ncol =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="next-steps" class="slide level2">
-<h2>Next Steps:</h2>
+
+<section id="findings" class="title-slide slide level1 center">
+<h1>Findings:</h1>
 <ul>
 <li>idk bro</li>
+</ul>
+</section>
+
+<section id="next-steps" class="title-slide slide level1 center">
+<h1>Next Steps:</h1>
+<ul>
+<li></li>
 </ul>
 <div class="footer footer-default">
 

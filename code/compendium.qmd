@@ -1,7 +1,11 @@
 ---
-title: "SAR11pres05"
+title: "SAR11 Bacteria Comparative Genomics Project"
+author: "Susan Garcia"
+date: "June 1st, 2023"
 format: revealjs
-editor: visual
+output:
+    theme: "moon"
+    highlightStyle: "github"
 ---
 
 ```{r setup, include = FALSE}
@@ -21,15 +25,35 @@ knitr::opts_chunk$set(
 )
 ```
 
-# **SAR11 Bacteria Comparative Genomics Project**
+# Introduction
 
-SAR11 is a group of small, carbon-oxidizing bacteria that reach a global estimated population size of 2.4×10^28^ cells-approximately 25% of all plankton. They play a key role in the ocean's environment.
+## SAR11 Bacteria
 
-The goal of this comparative genomics project is to find presence and absence of SAR11 genomes. The genomes of interest were obtained from NCBI database.
+\- SAR11 is a group of small, carbon-oxidizing bacteria
+
+\- Estimated population size of 2.4×10\^28 cells, approximately 25% of all plankton
+
+\- Key role in the ocean's environment
+
+## Objective
+
+\- Comparative genomics project to identify presence and absence of SAR11 genomes
+
+\- Genomes obtained from NCBI database
 
 # Workflow
 
-# Combined Tables for Comparison
+## Workflow Steps
+
+1\. Data acquisition from NCBI database
+
+2\. Genome assembly and quality assessment
+
+3\. Comparative analysis of SAR11 genomes
+
+4\. Visualization
+
+## Combined Tables for Comparison
 
 ```{r, echo = TRUE}
 # Join the data frames
@@ -39,10 +63,15 @@ joinedtotal_df <- bind_rows(joined1_df, joined2_df, joined3_df, joined4_df, join
 #kable(head(joinedtotal_df, n = 10), caption = "Joined data frame with kable formatting (first 10 rows)") 
 
 #Scrollable tables
-datatable(head(joinedtotal_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE))  
+datatable(head(joinedtotal_df), options = list(scrollX = TRUE, scrollY = "400px", scrollCollapse = TRUE, paging = FALSE)) 
+
 ```
 
-# Protein Expression Basic Heatmap
+# Protein Expression Analysis
+
+## Basic Heatmap
+
+\- Visualize protein expression levels using a basic heatmap
 
 ```{r, echo = TRUE}
 # Summarize the data
@@ -58,7 +87,7 @@ wide_df <- summarized_df %>%
 data_mat <- as.matrix(wide_df[, -1])
 
 # Define custom color palette
-my_palette <- colorRampPalette(c("orange", "purple", "white"))(n = 100)
+my_palette <- colorRampPalette(c("darkblue", "white", "darkred"))(n = 100)
 
 # Generate the heatmap with custom colors and row names
 heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
@@ -66,7 +95,7 @@ heatmap(data_mat, Rowv = NA, Colv = NA, col = my_palette, scale = "column",
 
 ```
 
-# Protein Expression Heatmap
+## Protein Expression Heatmap
 
 ```{r, echo = TRUE}
 # Summarize the data
@@ -107,7 +136,9 @@ par(mar = c(6, 4, 3, 2))
 
 ```
 
-# Combination of 6 figures of Protein Hits
+# Comparative Analysis
+
+## Protein Hits
 
 ```{r, echo = TRUE}
 # Create a list to store the data frames for each figure
@@ -159,10 +190,16 @@ ggplot(combined_data, aes(x = reorder(String, -Count), y = Count, fill = String)
   facet_wrap(~ Figure, ncol = 3)
 ```
 
-# Findings:
+# Findings
 
--   idk bro
+## Key Findings
 
-# Next Steps:
+\- Compare protein expression levels across different organisms, where higher expression levels are represented by warmer colors (e.g., red) and lower expression levels by cooler colors (e.g., blue).
 
--   
+# Next Steps
+
+## Future Directions
+
+\- Gave better understanding of what proteins are lower highlighted and better understanding of the organism
+
+\- Code is a pipeline and works pretty well with other genomes/protein sequences
