@@ -34,5 +34,9 @@ final touches to present.
 This could be my final figure for my project? I hope.
 ![](../code/images/hope.png)
 
+SR-files-4-blast.Rmd is the file that Steven Roberts created to take many files 
 
+01sar11blastp.Rmd is the file that was the first. it has the basic idea of how to blast and how I did it.
+
+02allsar11.Rmd is the file that combined all protein sequences.
 
